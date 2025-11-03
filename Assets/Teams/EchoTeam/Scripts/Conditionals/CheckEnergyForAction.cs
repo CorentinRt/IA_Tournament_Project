@@ -19,7 +19,9 @@ namespace Echo
         public ACTION ActionToCheck = ACTION.MINE;
 
         [Tooltip("Minimum of energy to always keep")]
-        public float AlwaysKeepEnergy = 0.4f; // voir si on met variable dans echo data si utilisée partout
+        public SharedFloat AlwaysKeepEnergy = 0.4f; // voir si on met variable dans echo data si utilisée partout
+
+        private EchoData _echoData;
 
         private float _mineEnergyCost = 0.2f;
         private float _shootEnergyCost = 0.12f;
@@ -30,19 +32,19 @@ namespace Echo
         {
             base.OnAwake();
 
-            // mettre echo data dans awake quand sur de l'ordre d'execution des scripts
+            _echoData = GetComponent<EchoData>();
         }
 
         public override TaskStatus OnUpdate()
         {
-            if (EchoData.Instance == null)
+            if (_echoData == null)
             {
                 UnityEngine.Debug.LogError("Couldn't find echo data in check energy.");
                 return TaskStatus.Failure;
             }
 
-            GameData gameData = EchoData.Instance.GetGameData();
-            SpaceShipView spaceShip = EchoData.Instance.GetOurSpaceship();
+            GameData gameData = _echoData.GetGameData();
+            SpaceShipView spaceShip = _echoData.GetOurSpaceship();
 
             if (spaceShip == null || gameData == null)
             {
@@ -56,13 +58,13 @@ namespace Echo
             switch (ActionToCheck)
             {
                 case ACTION.MINE:
-                    hasMinimumEnergy = (currentEnergy - _mineEnergyCost >= AlwaysKeepEnergy);
+                    hasMinimumEnergy = (currentEnergy - _mineEnergyCost >= AlwaysKeepEnergy.Value);
                     break;
                 case ACTION.SHOOT:
-                    hasMinimumEnergy = (currentEnergy - _shootEnergyCost >= AlwaysKeepEnergy);
+                    hasMinimumEnergy = (currentEnergy - _shootEnergyCost >= AlwaysKeepEnergy.Value);
                     break;
                 case ACTION.SHOCKWAVE:
-                    hasMinimumEnergy = (currentEnergy - _shockwaveEnergyCost >= AlwaysKeepEnergy);
+                    hasMinimumEnergy = (currentEnergy - _shockwaveEnergyCost >= AlwaysKeepEnergy.Value);
                     break;
             }
 

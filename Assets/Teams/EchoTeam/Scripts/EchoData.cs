@@ -1,4 +1,5 @@
 using DoNotModify;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Echo
@@ -6,18 +7,11 @@ namespace Echo
     public class EchoData : MonoBehaviour
     {
         // ----- FIELDS ----- //
-        public static EchoData Instance = null;
-
         private int _ourSpaceshipID = 0;
         private int _enemySpaceshipID = 1;
 
         private GameManager _gameManager;
         // ----- FIELDS ----- //
-
-        private void Awake()
-        {
-            Instance = this;
-        }
 
         private void Start()
         {
@@ -46,6 +40,21 @@ namespace Echo
         public SpaceShipView GetEnemySpaceship()
         {
             return GetGameData().GetSpaceShipForOwner(_enemySpaceshipID);
+        }
+
+        public List<WayPointView> GetWayPoints()
+        {
+            return GetGameData().WayPoints;
+        }
+
+        public List<AsteroidView> GetAsteroids()
+        {
+            return GetGameData().Asteroids;
+        }
+
+        public List<MineView> GetMines()
+        {
+            return GetGameData().Mines;
         }
     }
 }
