@@ -5,7 +5,7 @@ using DoNotModify;
 
 namespace Echo
 {
-	public class ExampleController : BaseSpaceShipController
+	public class EchoController : BaseSpaceShipController
 	{
 
 		public override void Initialize(SpaceShipView spaceship, GameData data)
