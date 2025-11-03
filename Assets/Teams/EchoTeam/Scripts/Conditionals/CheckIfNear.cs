@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace Echo
 {
+    [TaskCategory("Echo")]
     public class CheckIfNear : Conditional
     {
         public enum TARGET
