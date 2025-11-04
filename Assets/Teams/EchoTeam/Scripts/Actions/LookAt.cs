@@ -1,14 +1,11 @@
 using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
-using UnityEngine;
 
 namespace Echo
 {
-    [TaskCategory("Echo")]
-    public class LookAt : Action
+    public class LookAt : EchoAction
     {
         public SharedFloat targetOrientation;
-        private EchoController _echoController;
 
         public override void OnAwake()
         {

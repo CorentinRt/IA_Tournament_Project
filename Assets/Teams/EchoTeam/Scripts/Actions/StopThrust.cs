@@ -2,11 +2,8 @@ using BehaviorDesigner.Runtime.Tasks;
 
 namespace Echo
 {
-    [TaskCategory("Echo")]
-    public class StopThrust : Action
+    public class StopThrust : EchoAction
     {
-        private EchoController _echoController;
-        
         public override void OnAwake()
         {
             base.OnAwake();
