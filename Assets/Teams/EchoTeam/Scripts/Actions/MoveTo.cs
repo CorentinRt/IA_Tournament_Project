@@ -24,6 +24,8 @@ namespace Echo
         private SpaceShipView _ourSpaceShip;
         private SpaceShipView _enemySpaceShip;
 
+        private float _minThrustBraking = 0.1f;
+
         public override void OnAwake()
         {
             base.OnAwake();
@@ -76,7 +78,8 @@ namespace Echo
             Vector2 velocityDiffAngleVector = normalizedDir - velocity.normalized;
             velocityDiffAngleVector.Normalize();
 
-            float velocityDiffAngle = Mathf.Abs(Mathf.Atan2(velocityDiffAngleVector.y, velocityDiffAngleVector.x) * Mathf.Rad2Deg);
+            //float velocityDiffAngle = Mathf.Abs(Mathf.Atan2(velocityDiffAngleVector.y, velocityDiffAngleVector.x) * Mathf.Rad2Deg);
+            float velocityDiffAngle = EchoMath.OriginToTargetVectorAngle(velocity.normalized, normalizedDir);
 
             //Debug.DrawRay(_ourSpaceShip.Position, normalizedDir * 2f, Color.red);
             //Debug.DrawRay(_ourSpaceShip.Position, velocity.normalized * 2f, Color.green);
@@ -89,7 +92,11 @@ namespace Echo
             bool canThrust = velocityDiffAngle > 10f || velocity.magnitude < _ourSpaceShip.SpeedMax - 0.5f || dotProduct < 0;
 
             if (canThrust)
-                thrustPercent = Mathf.Lerp(1f, 0.5f, velocityDiffAngle / 140f);
+            {
+                thrustPercent = Mathf.Lerp(1f, _minThrustBraking, velocityDiffAngle / 180f);
+
+                // Adjust thrust percent if facing right dir but velocity is wrong direction
+            }
             
             // Apply to data
             _echoController.GetInputDataByRef().thrust = thrustPercent;
