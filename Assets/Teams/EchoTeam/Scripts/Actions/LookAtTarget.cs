@@ -16,7 +16,7 @@ namespace Echo
     public class LookAtTarget : EchoAction
     {
         public LookAtTargetType targetType;
-        public float angleTolerance;
+        public SharedFloat angleTolerance;
         
         public override TaskStatus OnUpdate()
         {
@@ -25,7 +25,7 @@ namespace Echo
                 case LookAtTargetType.None:
                     return TaskStatus.Success;
                 case LookAtTargetType.Ship:
-                    return LookAtShip();
+                    return LookAtEnemyShip();
                 case LookAtTargetType.ClosestMine:
                     return LookAtClosestMine();
                 default:
@@ -33,7 +33,7 @@ namespace Echo
             }
         }
         
-        private TaskStatus LookAtShip()
+        private TaskStatus LookAtEnemyShip()
         {
             // Get both spaceships
             SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
@@ -48,21 +48,7 @@ namespace Echo
             SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
             
             // Get closest mine
-            List<MineView> mines = _echoData.GetMines();
-            
-            if(mines.Count == 0) return TaskStatus.Failure;
-            
-            MineView closestMine = mines[0];
-            float closestDistance = Vector2.Distance(closestMine.Position, ourSpaceship.Position);
-            foreach (MineView mine in mines)
-            {
-                float tempDistance = Vector2.Distance(mine.Position, ourSpaceship.Position);
-                if (tempDistance < closestDistance)
-                {
-                    closestDistance = tempDistance;
-                    closestMine = mine;
-                }
-            }
+            MineView closestMine = _echoData.GetClosestMine();
             
             return LookAtTargetPosition(ourSpaceship,  closestMine.Position);
         }
@@ -70,10 +56,10 @@ namespace Echo
         private TaskStatus LookAtTargetPosition(SpaceShipView spaceshipView, Vector2 targetPosition)
         {
             // Get angle formed by vector for our ship to mine
-            float targetOrientation = OriginToTargetAngle(spaceshipView.Position, targetPosition);
+            float targetOrientation = EchoMath.OriginToTargetAngle(spaceshipView.Position, targetPosition);
             
             // Compare current ship orientation to normalizedTargetOrientation
-            if (Mathf.Abs(spaceshipView.Orientation - targetOrientation) <= angleTolerance)
+            if (Mathf.Abs(spaceshipView.Orientation - targetOrientation) <= angleTolerance.Value)
             {
                 // If we are looking at the target we return success
                 return TaskStatus.Success;
@@ -82,19 +68,6 @@ namespace Echo
             // Else we set the targetOrientation of our spaceship and return failure
             _echoController.GetInputDataByRef().targetOrientation = targetOrientation;
             return TaskStatus.Failure;
-        }
-
-        /// <summary>
-        /// Returns the angle form by the vector going from origin to target 
-        /// </summary>
-        private float OriginToTargetAngle(Vector2 origin,Vector2 target)
-        {
-            // Get angle formed by vector for our ship to mine
-            Vector2 ourShipToEnemyShip = target - origin;
-            float targetOrientation = Mathf.Atan2(ourShipToEnemyShip.y, ourShipToEnemyShip.x) * Mathf.Rad2Deg;
-            
-            // Convert angle from range -180/180 to 0/360
-            return (targetOrientation + 360) % 360;;
         }
     } 
     
