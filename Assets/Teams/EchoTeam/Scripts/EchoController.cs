@@ -7,16 +7,18 @@ namespace Echo
 {
 	public class EchoController : BaseSpaceShipController
 	{
-		public InputData InputData { get; set; }
-		
+		private InputData _inputData;
+
 		public override void Initialize(SpaceShipView spaceship, GameData data)
 		{
 		}
 
 		public override InputData UpdateInput(SpaceShipView spaceship, GameData data)
 		{
-			return InputData;
+			return _inputData;
 		}
+		
+		public ref InputData GetInputDataByRef() => ref _inputData;
 	}
 
 }
