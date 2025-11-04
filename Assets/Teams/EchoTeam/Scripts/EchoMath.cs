@@ -7,7 +7,7 @@ namespace Echo
         /// <summary>
         /// Returns the angle form by the vector going from origin to target 
         /// </summary>
-        public static float OriginToTargetAngle(Vector2 origin,Vector2 target)
+        public static float OriginToTargetVectorAngle(Vector2 origin,Vector2 target)
         {
             // Get angle formed by vector for our ship to mine
             Vector2 originToTarget = target - origin;

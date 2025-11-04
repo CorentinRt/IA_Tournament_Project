@@ -39,7 +39,7 @@ namespace Echo
         private TaskStatus CheckLookAtTargetPosition(SpaceShipView spaceshipView, Vector2 targetPosition)
         {
             // Get angle formed by vector for our ship to mine
-            float targetOrientation = EchoMath.OriginToTargetAngle(spaceshipView.Position, targetPosition);
+            float targetOrientation = EchoMath.OriginToTargetVectorAngle(spaceshipView.Position, targetPosition);
             
             // Compare current ship orientation to normalizedTargetOrientation
             if (Mathf.Abs(spaceshipView.Orientation - targetOrientation) <= angleTolerance.Value)
