@@ -17,7 +17,7 @@ namespace Echo
             {
                 case LookAtTargetType.None:
                     return TaskStatus.Failure;
-                case LookAtTargetType.Ship:
+                case LookAtTargetType.EnemyShip:
                     return CheckLookAtEnemyShip();
                 case LookAtTargetType.ClosestMine:
                     return CheckLookAtClosestMine();
