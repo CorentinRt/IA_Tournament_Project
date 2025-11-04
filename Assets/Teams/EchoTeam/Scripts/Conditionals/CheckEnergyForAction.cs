@@ -16,16 +16,18 @@ namespace Echo
 
         // ----- FIELDS ----- //
         [Tooltip("Action to check energy")]
-        public ACTION ActionToCheck = ACTION.MINE;
+        public ACTION actionToCheck = ACTION.MINE;
 
         [Tooltip("Minimum of energy to always keep")]
-        public SharedFloat AlwaysKeepEnergy = 0.4f; // voir si on met variable dans echo data si utilisée partout
+        public SharedFloat alwaysKeepEnergy = 0.4f; // voir si on met variable dans echo data si utilisée partout
 
         private EchoData _echoData;
 
         private float _mineEnergyCost = 0.2f;
         private float _shootEnergyCost = 0.12f;
         private float _shockwaveEnergyCost = 0.4f;
+
+        private SpaceShipView _ourSpaceShip;
         // ----- FIELDS ----- //
 
         public override void OnAwake()
@@ -33,6 +35,8 @@ namespace Echo
             base.OnAwake();
 
             _echoData = GetComponent<EchoData>();
+
+            _ourSpaceShip = _echoData.GetOurSpaceship();
         }
 
         public override TaskStatus OnUpdate()
@@ -43,28 +47,25 @@ namespace Echo
                 return TaskStatus.Failure;
             }
 
-            GameData gameData = _echoData.GetGameData();
-            SpaceShipView spaceShip = _echoData.GetOurSpaceship();
-
-            if (spaceShip == null || gameData == null)
+            if (_ourSpaceShip == null)
             {
-                UnityEngine.Debug.LogError($"No spaceship or game data found in check energy");
+                UnityEngine.Debug.LogError($"No spaceship found in check energy");
                 return TaskStatus.Failure;
             }
 
-            float currentEnergy = spaceShip.Energy;
+            float currentEnergy = _ourSpaceShip.Energy;
             bool hasMinimumEnergy = false;
 
-            switch (ActionToCheck)
+            switch (actionToCheck)
             {
                 case ACTION.MINE:
-                    hasMinimumEnergy = (currentEnergy - _mineEnergyCost >= AlwaysKeepEnergy.Value);
+                    hasMinimumEnergy = (currentEnergy - _mineEnergyCost >= alwaysKeepEnergy.Value);
                     break;
                 case ACTION.SHOOT:
-                    hasMinimumEnergy = (currentEnergy - _shootEnergyCost >= AlwaysKeepEnergy.Value);
+                    hasMinimumEnergy = (currentEnergy - _shootEnergyCost >= alwaysKeepEnergy.Value);
                     break;
                 case ACTION.SHOCKWAVE:
-                    hasMinimumEnergy = (currentEnergy - _shockwaveEnergyCost >= AlwaysKeepEnergy.Value);
+                    hasMinimumEnergy = (currentEnergy - _shockwaveEnergyCost >= alwaysKeepEnergy.Value);
                     break;
             }
 

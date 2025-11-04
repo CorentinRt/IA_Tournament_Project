@@ -17,12 +17,17 @@ namespace Echo
 
         // ----- FIELDS ----- //
         [Tooltip("Target to check radius")]
-        public TARGET TargetToCheck = TARGET.ENEMY;
+        public TARGET targetToCheck = TARGET.ENEMY;
 
         [Tooltip("Max distance to check target")]
-        public SharedFloat CheckDistance = 0.4f;
+        public SharedFloat checkDistance = 0.4f;
 
         private EchoData _echoData;
+
+        private SpaceShipView _ourSpaceship;
+        private SpaceShipView _enemySpaceship;
+        private List<WayPointView> _waypoints = new List<WayPointView>();
+        private List<MineView> _mines = new List<MineView>();
         // ----- FIELDS ----- //
 
         public override void OnAwake()
@@ -40,26 +45,21 @@ namespace Echo
                 return TaskStatus.Failure;
             }
 
-            SpaceShipView ourSpaceShip = _echoData.GetOurSpaceship();
-            SpaceShipView enemySpaceShip = _echoData.GetEnemySpaceship();
-            List<WayPointView> wayPoints = _echoData.GetWayPoints();
-            List<MineView> mines = _echoData.GetMines();
-
             float distance = 0f;
             bool isNear = false;
 
-            switch (TargetToCheck)
+            switch (targetToCheck)
             {
                 case TARGET.ENEMY:
-                    distance = UnityEngine.Vector3.Distance(ourSpaceShip.Position, enemySpaceShip.Position);
-                    isNear = distance <= CheckDistance.Value;
+                    distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, _enemySpaceship.Position);
+                    isNear = distance <= checkDistance.Value;
                     break;
 
                 case TARGET.WAYPOINT:
-                    foreach (WayPointView waypoint in wayPoints)
+                    foreach (WayPointView waypoint in _waypoints)
                     {
-                        distance = UnityEngine.Vector3.Distance(ourSpaceShip.Position, waypoint.Position);
-                        if (distance <= CheckDistance.Value)
+                        distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, waypoint.Position);
+                        if (distance <= checkDistance.Value)
                         {
                             isNear = true;
                             break;
@@ -68,10 +68,10 @@ namespace Echo
                     break;
 
                 case TARGET.MINE:
-                    foreach (MineView mine in mines)
+                    foreach (MineView mine in _mines)
                     {
-                        distance = UnityEngine.Vector3.Distance(ourSpaceShip.Position, mine.Position);
-                        if (distance <= CheckDistance.Value)
+                        distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, mine.Position);
+                        if (distance <= checkDistance.Value)
                         {
                             isNear = true;
                             break;
