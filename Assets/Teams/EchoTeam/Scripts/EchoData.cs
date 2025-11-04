@@ -57,7 +57,7 @@ namespace Echo
             return GetGameData().Mines;
         }
 
-        public MineView GetClosestMine()
+        public MineView GetNearestMine()
         {
             SpaceShipView ourSpaceship = GetOurSpaceship();
             List<MineView> mines = GetMines();

@@ -17,10 +17,10 @@ namespace Echo
             {
                 case LookAtTargetType.None:
                     return TaskStatus.Failure;
-                case LookAtTargetType.Ship:
+                case LookAtTargetType.EnemyShip:
                     return CheckLookAtEnemyShip();
-                case LookAtTargetType.ClosestMine:
-                    return CheckLookAtClosestMine();
+                case LookAtTargetType.NearestMine:
+                    return CheckLookAtNearestMine();
                 default:
                     return TaskStatus.Failure;
             }
@@ -31,9 +31,9 @@ namespace Echo
             return CheckLookAtTargetPosition(_echoData.GetOurSpaceship(), _echoData.GetEnemySpaceship().Position);
         }
 
-        private TaskStatus CheckLookAtClosestMine()
+        private TaskStatus CheckLookAtNearestMine()
         {
-            return CheckLookAtTargetPosition(_echoData.GetOurSpaceship(), _echoData.GetClosestMine().Position);
+            return CheckLookAtTargetPosition(_echoData.GetOurSpaceship(), _echoData.GetNearestMine().Position);
         }
 
         private TaskStatus CheckLookAtTargetPosition(SpaceShipView spaceshipView, Vector2 targetPosition)

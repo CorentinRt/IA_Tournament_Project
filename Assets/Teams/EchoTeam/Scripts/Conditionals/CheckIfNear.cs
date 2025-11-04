@@ -36,6 +36,8 @@ namespace Echo
             _enemySpaceship = _echoData.GetEnemySpaceship();
             _waypoints = _echoData.GetWayPoints();
             _mines = _echoData.GetMines();
+
+            _echoDebug.AddCircle("CheckIfNearRadius", _ourSpaceship.Position, checkDistance.Value, UnityEngine.Color.blue);
         }
 
         public override TaskStatus OnUpdate()
@@ -45,6 +47,8 @@ namespace Echo
                 UnityEngine.Debug.LogError("Couldn't find echo data in check if near.");
                 return TaskStatus.Failure;
             }
+
+            _echoDebug.UpdateDebugCirclePosition("CheckIfNearRadius", _ourSpaceship.Position);
 
             float distance = 0f;
             bool isNear = false;
