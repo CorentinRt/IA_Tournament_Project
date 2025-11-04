@@ -63,15 +63,11 @@ namespace Echo
             if (path.Count <= 1)
                 return TaskStatus.Success;
 
-            CellData nextCellData = path[1];
-
-            Vector2 dir = nextCellData.Position - _ourSpaceShip.Position;
-
+            // Compute dir to next cellData
+            Vector2 dir = path[1].Position - _ourSpaceShip.Position;
             Vector2 normalizedDir = dir.normalized;
 
             float targetOrientation = AimingHelpers.ComputeSteeringOrient(_ourSpaceShip, _ourSpaceShip.Position + dir, 1.2f);
-
-            Vector2 targetOrientationVector = Vector2.up;
 
             Vector2 velocity = _ourSpaceShip.Velocity;
 
@@ -80,19 +76,20 @@ namespace Echo
 
             float velocityDiffAngle = Mathf.Abs(Mathf.Atan2(velocityDiffAngleVector.y, velocityDiffAngleVector.x) * Mathf.Rad2Deg);
 
+            //Debug.DrawRay(_ourSpaceShip.Position, normalizedDir * 2f, Color.red);
+            //Debug.DrawRay(_ourSpaceShip.Position, velocity.normalized * 2f, Color.green);
+
             float thrustPercent = 0f;
 
             float dotProduct = velocity.x * dir.y + velocity.y * dir.x;
 
-            Debug.DrawRay(_ourSpaceShip.Position, normalizedDir * 2f, Color.red);
-            Debug.DrawRay(_ourSpaceShip.Position, velocity.normalized * 2f, Color.green);
+            // Determine if need to use thrust
+            bool canThrust = velocityDiffAngle > 10f || velocity.magnitude < _ourSpaceShip.SpeedMax - 0.5f || dotProduct < 0;
 
-            if (velocityDiffAngle > 10f || velocity.magnitude < _ourSpaceShip.SpeedMax - 0.5f || dotProduct < 0)
-            {
+            if (canThrust)
                 thrustPercent = Mathf.Lerp(1f, 0.5f, velocityDiffAngle / 140f);
-            }
             
-            
+            // Apply to data
             _echoController.GetInputDataByRef().thrust = thrustPercent;
             _echoController.GetInputDataByRef().targetOrientation = targetOrientation;
 
