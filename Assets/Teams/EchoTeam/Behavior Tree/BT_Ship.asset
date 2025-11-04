@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b23f08d2ae4cba14087c1ed36193d82b, type: 3}
+  m_Name: BT_Ship
+  m_EditorClassIdentifier: 
+  mBehaviorSource:
+    behaviorName: Behavior Ship
+    behaviorDescription: 
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(416,-5)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Parallel","NodeData":{"Offset":"(-4,125)"},"ID":1,"Name":"Parallel","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(-253,118)"},"ID":2,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":false},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(0,115)"},"ID":3,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"Echo.CheckBulletComing","NodeData":{"Offset":"(-185,130)"},"ID":4,"Name":"Check
+        Bullet Coming","Instant":true,"SharedFloatcheckRadius":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":0},"SharedFloattolerance":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":0}},{"Type":"Echo.CheckEnergyForAction","NodeData":{"Offset":"(-1,129)"},"ID":5,"Name":"Check
+        Energy For Action","Instant":true,"ACTIONactionToCheck":"MINE","SharedFloatalwaysKeepEnergy":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":0.4}},{"Type":"Echo.Shockwave","NodeData":{"Offset":"(173,130)"},"ID":6,"Name":"Shockwave","Instant":true}]}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(147,374)"},"ID":7,"Name":"Selector","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(-115,152)"},"ID":8,"Name":"Selector","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"Echo.CheckIfNear","NodeData":{"Offset":"(-161.448975,158.816345)"},"ID":9,"Name":"Check
+        If Near","Instant":true,"TARGETtargetToCheck":"ENEMY","SharedFloatcheckDistance":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":0.4}},{"Type":"BehaviorDesigner.Runtime.Tasks.Parallel","NodeData":{"Offset":"(0.7957516,187.387817)"},"ID":10,"Name":"Parallel","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-146.1428,175.959152)"},"ID":11,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"Echo.LookAtOrientation","NodeData":{"Offset":"(-149.204,128.6123)"},"ID":12,"Name":"Look
+        At Orientation","Instant":true,"SharedFloattargetOrientation":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":0}},{"Type":"Echo.CheckCanHit","NodeData":{"Offset":"(3.85721016,130.653122)"},"ID":13,"Name":"Check
+        Can Hit","Instant":true,"TARGETtargetToCheck":"ENEMY","SharedFloathitTimeTolerance":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":0.1},"SharedFloatangleTolerance":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":5}},{"Type":"Echo.Shoot","NodeData":{"Offset":"(126.306152,126.571327)"},"ID":14,"Name":"Shoot","Instant":true}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(269.16333,200.448975)"},"ID":15,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(-66.14282,160.653076)"},"ID":16,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":false},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"Children":[{"Type":"Echo.CheckShockwaveRadius","NodeData":{"Offset":"(4.36682129,142.48999)"},"ID":17,"Name":"Check
+        Shockwave Radius","Instant":true,"TARGETtargetToCheck":"ENEMY"}]},{"Type":"Echo.Shockwave","NodeData":{"Offset":"(86.91852,301.46933)"},"ID":18,"Name":"Shockwave","Instant":true}]}]}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(265.795929,163.9183)"},"ID":19,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"Echo.MoveTo","NodeData":{"Offset":"(-136.85675,116.163025)"},"ID":20,"Name":"Move
+        To","Instant":true,"MOVETO_TARGET_target":"ENEMY"},{"Type":"Echo.CheckEnergyForAction","NodeData":{"Offset":"(6.000305,116.163086)"},"ID":21,"Name":"Check
+        Energy For Action","Instant":true,"ACTIONactionToCheck":"MINE","SharedFloatalwaysKeepEnergy":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":0.4}},{"Type":"Echo.DropMine","NodeData":{"Offset":"(159.061523,116.162964)"},"ID":22,"Name":"Drop
+        Mine","Instant":true}]}]}]}}'
+      fieldSerializationData:
+        typeName: []
+        fieldNameHash: 
+        startIndex: 
+        dataPosition: 
+        unityObjects: []
+        byteData: 
+        byteDataArray: 
+      Version: 1.7.12
