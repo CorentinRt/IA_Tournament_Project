@@ -31,7 +31,7 @@ namespace Echo
         {
             _pathfindingNavigationGraph = PathfindingNavigationGraph.Instance;
 
-            if (_pathfindingNavigationGraph != null)
+            if (_pathfindingNavigationGraph != null && !_pathfindingNavigationGraph.IsInit)
                 _pathfindingNavigationGraph.InitNavigationGraph();
         }
 
