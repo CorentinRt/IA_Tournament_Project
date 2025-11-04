@@ -1,16 +1,18 @@
+using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
-using DoNotModify;
-using Echo;
 using UnityEngine;
 
-[TaskCategory("Echo")]
-public class LookAt : Action
+namespace Echo
 {
-    [SerializeField] private float _targetOrientation;
-
-    public override void OnStart()
+    public class LookAt : EchoAction
     {
-        EchoController controller = GetComponent<EchoController>();
-        controller.GetInputDataByRef().targetOrientation = _targetOrientation;
-    }
+        public SharedFloat targetOrientation;
+
+        public override TaskStatus OnUpdate()
+        {
+            _echoController.GetInputDataByRef().targetOrientation  = targetOrientation.Value;
+            return TaskStatus.Success;
+        }
+    } 
 }
+
