@@ -4,12 +4,6 @@ namespace Echo
 {
     public class StopThrust : EchoAction
     {
-        public override void OnAwake()
-        {
-            base.OnAwake();
-            _echoController = GetComponent<EchoController>();
-        }
-        
         public override void OnStart()
         {
             _echoController.GetInputDataByRef().thrust = 0;
