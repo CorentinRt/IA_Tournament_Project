@@ -94,11 +94,20 @@ namespace Echo
             {
                 Debug.LogError("Error : Could not find EchoData component on controller ! Please check the component is on the gameObject !");
             }
+
+        }
+
+        private void Start()
+        {
+            InitNavigationGraph();
         }
 
         #region Graph Generation / Init
         public void InitNavigationGraph()
         {
+            if (_isInit)
+                return;
+
             if (_graphCellList == null)
                 _graphCellList = new Dictionary<Vector2, CellData>();
 
@@ -230,6 +239,9 @@ namespace Echo
 
         public List<CellData> FindPathTo(Vector2 startPosition, Vector2 targetPosition)
         {
+            if (!_isInit)
+                InitNavigationGraph();
+
             startPosition = SnapToGrid(startPosition);
             targetPosition = SnapToGrid(targetPosition);
 
