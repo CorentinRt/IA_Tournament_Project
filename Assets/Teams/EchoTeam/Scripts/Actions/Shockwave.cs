@@ -29,8 +29,4 @@ namespace Echo
             return TaskStatus.Success;
         }
     }
-
-    
-
-
 }

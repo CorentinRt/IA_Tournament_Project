@@ -26,6 +26,8 @@ namespace Echo
         private float _mineEnergyCost = 0.2f;
         private float _shootEnergyCost = 0.12f;
         private float _shockwaveEnergyCost = 0.4f;
+
+        private SpaceShipView _ourSpaceShip;
         // ----- FIELDS ----- //
 
         public override void OnAwake()
@@ -33,6 +35,8 @@ namespace Echo
             base.OnAwake();
 
             _echoData = GetComponent<EchoData>();
+
+            _ourSpaceShip = _echoData.GetOurSpaceship();
         }
 
         public override TaskStatus OnUpdate()
@@ -43,16 +47,13 @@ namespace Echo
                 return TaskStatus.Failure;
             }
 
-            GameData gameData = _echoData.GetGameData();
-            SpaceShipView spaceShip = _echoData.GetOurSpaceship();
-
-            if (spaceShip == null || gameData == null)
+            if (_ourSpaceShip == null)
             {
-                UnityEngine.Debug.LogError($"No spaceship or game data found in check energy");
+                UnityEngine.Debug.LogError($"No spaceship found in check energy");
                 return TaskStatus.Failure;
             }
 
-            float currentEnergy = spaceShip.Energy;
+            float currentEnergy = _ourSpaceShip.Energy;
             bool hasMinimumEnergy = false;
 
             switch (actionToCheck)
