@@ -10,6 +10,5 @@ public class LookAt : Action
     public override void OnStart()
     {
         EchoController controller = GetComponent<EchoController>();
-        controller.tar
     }
 }
