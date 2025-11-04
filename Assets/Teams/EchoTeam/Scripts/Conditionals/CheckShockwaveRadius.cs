@@ -2,6 +2,7 @@ using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
 using DoNotModify;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Echo
 {
@@ -15,7 +16,7 @@ namespace Echo
         }
 
         // ----- FIELDS ----- //
-        [Tooltip("Target to check is in radius")]
+        [BehaviorDesigner.Runtime.Tasks.Tooltip("Target to check is in radius")]
         public TARGET targetToCheck = TARGET.ENEMY;
 
         private float _shockwaveRadius;
@@ -34,6 +35,8 @@ namespace Echo
             _ourSpaceShip = _echoData.GetOurSpaceship();
             _enemySpaceShip = _echoData.GetEnemySpaceship();
             _mines = _echoData.GetMines();
+
+            _echoDebug.AddCircle("ShockwaveRadius", _ourSpaceShip.Position, _shockwaveRadius, Color.magenta);
         }
 
         public override TaskStatus OnUpdate()
@@ -43,6 +46,8 @@ namespace Echo
                 UnityEngine.Debug.LogError("Couldn't find echo data in check can hit.");
                 return TaskStatus.Failure;
             }
+
+            _echoDebug.UpdateDebugCirclePosition("ShockwaveRadius", _ourSpaceShip.Position);
 
             float distance;
             bool isInRadius = false;
