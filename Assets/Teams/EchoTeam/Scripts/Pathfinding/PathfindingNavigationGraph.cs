@@ -177,7 +177,6 @@ namespace Echo
                     {
                         if (Vector2.Distance(wayPoint.Position, currentPosition) < _waypointRadiusCheck + wayPoint.Radius)
                         {
-                            Debug.Log("Set cost to 1");
                             cost = 1;
                             break;
                         }
