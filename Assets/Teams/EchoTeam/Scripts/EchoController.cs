@@ -11,6 +11,11 @@ namespace Echo
 
 		public override void Initialize(SpaceShipView spaceship, GameData data)
 		{
+			EchoData echoData = GetComponent<EchoData>();
+			if (echoData)
+			{
+				echoData.InitData();
+			}
 		}
 
 		public override InputData UpdateInput(SpaceShipView spaceship, GameData data)
