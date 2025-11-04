@@ -10,7 +10,8 @@ namespace Echo
 
         public override TaskStatus OnUpdate()
         {
-            _echoController.GetInputDataByRef().targetOrientation  = targetOrientation.Value;
+            _echoController.GetInputDataByRef().targetOrientation = targetOrientation.Value;
+            
             return TaskStatus.Success;
         }
     } 
