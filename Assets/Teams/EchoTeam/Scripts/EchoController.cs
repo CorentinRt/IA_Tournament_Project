@@ -15,7 +15,14 @@ namespace Echo
 
 		public override InputData UpdateInput(SpaceShipView spaceship, GameData data)
 		{
-			return _inputData;
+			InputData inputDataCopy = _inputData;
+
+			// Reset booleans for next update
+			_inputData.shoot = false;
+			_inputData.dropMine = false;
+			_inputData.fireShockwave = false;
+
+			return inputDataCopy;
 		}
 		
 		public ref InputData GetInputDataByRef() => ref _inputData;
