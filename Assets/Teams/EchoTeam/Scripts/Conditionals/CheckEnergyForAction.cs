@@ -57,9 +57,11 @@ namespace Echo
                 case ACTION.MINE:
                     hasMinimumEnergy = (currentEnergy - _mineEnergyCost >= alwaysKeepEnergy.Value);
                     break;
+
                 case ACTION.SHOOT:
                     hasMinimumEnergy = (currentEnergy - _shootEnergyCost >= alwaysKeepEnergy.Value);
                     break;
+
                 case ACTION.SHOCKWAVE:
                     hasMinimumEnergy = (currentEnergy - _shockwaveEnergyCost >= alwaysKeepEnergy.Value);
                     break;
