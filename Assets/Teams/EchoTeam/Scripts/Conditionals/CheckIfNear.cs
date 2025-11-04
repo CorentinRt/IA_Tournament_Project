@@ -24,8 +24,6 @@ namespace Echo
 
         private SpaceShipView _ourSpaceship;
         private SpaceShipView _enemySpaceship;
-        private List<WayPointView> _waypoints = new List<WayPointView>();
-        private List<MineView> _mines = new List<MineView>();
         // ----- FIELDS ----- //
 
         public override void OnAwake()
@@ -34,8 +32,6 @@ namespace Echo
 
             _ourSpaceship = _echoData.GetOurSpaceship();
             _enemySpaceship = _echoData.GetEnemySpaceship();
-            _waypoints = _echoData.GetWayPoints();
-            _mines = _echoData.GetMines();
 
             _echoDebug.AddCircle("CheckIfNearRadius", _ourSpaceship.Position, checkDistance.Value, UnityEngine.Color.blue);
         }
@@ -61,27 +57,15 @@ namespace Echo
                     break;
 
                 case TARGET.WAYPOINT:
-                    foreach (WayPointView waypoint in _waypoints)
-                    {
-                        distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, waypoint.Position);
-                        if (distance <= checkDistance.Value)
-                        {
-                            isNear = true;
-                            break;
-                        }
-                    }
+                    WayPointView nearestWaypoint = _echoData.GetNearestEnemyWayPoint();
+                    distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, nearestWaypoint.Position);
+                    isNear = distance <= checkDistance.Value;
                     break;
 
                 case TARGET.MINE:
-                    foreach (MineView mine in _mines)
-                    {
-                        distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, mine.Position);
-                        if (distance <= checkDistance.Value)
-                        {
-                            isNear = true;
-                            break;
-                        }
-                    }
+                    MineView nearestMine = _echoData.GetNearestMine();
+                    distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, nearestMine.Position);
+                    isNear = distance <= checkDistance.Value;
                     break;
             }
 

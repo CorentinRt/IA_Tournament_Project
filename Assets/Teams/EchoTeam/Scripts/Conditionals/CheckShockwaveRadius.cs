@@ -3,6 +3,7 @@ using BehaviorDesigner.Runtime.Tasks;
 using DoNotModify;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Echo
 {
@@ -19,11 +20,13 @@ namespace Echo
         [BehaviorDesigner.Runtime.Tasks.Tooltip("Target to check is in radius")]
         public TARGET targetToCheck = TARGET.ENEMY;
 
+        [BehaviorDesigner.Runtime.Tasks.Tooltip("DebugRadiusColor")]
+        public Color Color;
+
         private float _shockwaveRadius;
 
         private SpaceShipView _ourSpaceShip;
         private SpaceShipView _enemySpaceShip;
-        private List<MineView> _mines = new List<MineView>();
         // ----- FIELDS ----- //
 
         public override void OnAwake()
@@ -34,7 +37,6 @@ namespace Echo
 
             _ourSpaceShip = _echoData.GetOurSpaceship();
             _enemySpaceShip = _echoData.GetEnemySpaceship();
-            _mines = _echoData.GetMines();
 
             _echoDebug.AddCircle("ShockwaveRadius", _ourSpaceShip.Position, _shockwaveRadius, Color.magenta);
         }
@@ -60,15 +62,9 @@ namespace Echo
                     break;
 
                 case TARGET.MINE:
-                    foreach (MineView mine in _mines)
-                    {
-                        distance = UnityEngine.Vector3.Distance(_ourSpaceShip.Position, mine.Position);
-                        if (distance <= _shockwaveRadius)
-                        {
-                            isInRadius = true;
-                            break;
-                        }
-                    }
+                    MineView nearestMine = _echoData.GetNearestMine();
+                    distance = UnityEngine.Vector3.Distance(_ourSpaceShip.Position, nearestMine.Position);
+                    isInRadius = distance <= _shockwaveRadius;
                     break;
             }
 
