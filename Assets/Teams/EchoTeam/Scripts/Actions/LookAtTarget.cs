@@ -9,7 +9,7 @@ namespace Echo
     public enum LookAtTargetType
     {
         None = -1,
-        Ship = 0,
+        EnemyShip = 0,
         ClosestMine = 1
     }
     
@@ -24,7 +24,7 @@ namespace Echo
             {
                 case LookAtTargetType.None:
                     return TaskStatus.Success;
-                case LookAtTargetType.Ship:
+                case LookAtTargetType.EnemyShip:
                     return LookAtEnemyShip();
                 case LookAtTargetType.ClosestMine:
                     return LookAtClosestMine();
