@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 995883328052245445}
   - component: {fileID: 5100504329485691672}
   - component: {fileID: -4126076399028636266}
+  - component: {fileID: -1628288698933354887}
   - component: {fileID: 3039252958360588374}
   - component: {fileID: -1026151362576228954}
   - component: {fileID: 3350509595596807163}
@@ -60,6 +61,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79f4d0c93b807734592d96760a86b01f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-1628288698933354887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7672329417856911656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6509823c6bd29194d8bae72d976d74a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3039252958360588374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,10 +101,11 @@ MonoBehaviour:
       parentIndex: 
       startIndex: 
       variableStartIndex: 
-      JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(315.5,30)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(1,129)"},"ID":1,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"","Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":"","BooleanmValue":true},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":"","BooleanmValue":false},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(3,147)"},"ID":2,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"Echo.MoveTo","NodeData":{"Offset":"(-230,140)"},"ID":3,"Name":"Move
-        To","Instant":true,"MOVETO_TARGET_target":"ENEMY"},{"Type":"Echo.CheckEnergyForAction","NodeData":{"Offset":"(-53.2498779,138.33313)"},"ID":4,"Name":"Check
-        Energy For Action","Instant":true,"ACTIONactionToCheck":"MINE","SharedFloatalwaysKeepEnergy":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":0.4}},{"Type":"Echo.CheckShockwaveRadius","NodeData":{"Offset":"(137.000122,142)"},"ID":5,"Name":"Check
-        Shockwave Radius","Instant":true,"TARGETtargetToCheck":"ENEMY"},{"Type":"Echo.Shockwave","NodeData":{"Offset":"(311.000122,142)"},"ID":6,"Name":"Shockwave","Instant":true}]}]},"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"Test","IsShared":true,"Int32mValue":0}]}'
+      JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(315.5,30)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(1,129)"},"ID":1,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"","Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":"","BooleanmValue":true},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":"","BooleanmValue":false},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(3.00003052,261.392883)"},"ID":2,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"Echo.CheckIfNear","NodeData":{"Offset":"(-276.005341,163.425842)"},"ID":3,"Name":"Check
+        If Near","Instant":true,"TARGETtargetToCheck":"ENEMY","SharedFloatcheckDistance":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":4}},{"Type":"Echo.CheckShockwaveRadius","NodeData":{"Offset":"(-115.720184,148.573761)"},"ID":4,"Name":"Check
+        Shockwave Radius","Instant":true,"TARGETtargetToCheck":"ENEMY"},{"Type":"Echo.CheckEnergyForAction","NodeData":{"Offset":"(91.9113159,138.33313)"},"ID":5,"Name":"Check
+        Energy For Action","Instant":true,"ACTIONactionToCheck":"SHOOT","SharedFloatalwaysKeepEnergy":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":0.4}},{"Type":"Echo.CheckCanHit","NodeData":{"Offset":"(261.3601,142.257935)"},"ID":6,"Name":"Check
+        Can Hit","Instant":true,"TARGETtargetToCheck":"ENEMY","SharedFloathitTimeTolerance":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":0.2},"SharedFloatangleTolerance":{"Type":"BehaviorDesigner.Runtime.SharedFloat","Name":null,"SinglemValue":10}},{"Type":"Echo.Shoot","NodeData":{"Offset":"(404.37085,140.860046)"},"ID":7,"Name":"Shoot","Instant":true}]}]},"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"Test","IsShared":true,"Int32mValue":0}]}'
       fieldSerializationData:
         typeName: []
         fieldNameHash: 

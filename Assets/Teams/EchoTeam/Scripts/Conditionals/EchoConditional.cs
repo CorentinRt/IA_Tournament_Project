@@ -8,6 +8,7 @@ namespace Echo
     {
         protected EchoController _echoController;
         protected EchoData _echoData;
+        protected EchoDebug _echoDebug;
 
         public override void OnAwake()
         {
@@ -15,6 +16,7 @@ namespace Echo
             
             _echoData = GetComponent<EchoData>();
             _echoController = GetComponent<EchoController>();
+            _echoDebug = GetComponent<EchoDebug>();
         }
     }
 }
