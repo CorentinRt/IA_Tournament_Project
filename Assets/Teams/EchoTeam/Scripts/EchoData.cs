@@ -13,7 +13,7 @@ namespace Echo
         private GameManager _gameManager;
         // ----- FIELDS ----- //
 
-        private void Start()
+        public void InitData()
         {
             _gameManager = GameManager.Instance;
 
