@@ -56,14 +56,14 @@ namespace Echo
             {
                 case TARGET.ENEMY:
                     distance = UnityEngine.Vector3.Distance(_ourSpaceShip.Position, _enemySpaceShip.Position);
-                    isInRadius = distance <= _shockwaveRadius / 2;
+                    isInRadius = distance <= _shockwaveRadius;
                     break;
 
                 case TARGET.MINE:
                     foreach (MineView mine in _mines)
                     {
                         distance = UnityEngine.Vector3.Distance(_ourSpaceShip.Position, mine.Position);
-                        if (distance <= _shockwaveRadius / 2)
+                        if (distance <= _shockwaveRadius)
                         {
                             isInRadius = true;
                             break;
