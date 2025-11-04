@@ -55,6 +55,8 @@ namespace Echo
         private float _cellSize = 0.5f;
 
         private float _asteroidCollisionRadiusCheck = 0.3f;
+
+        private EchoData _data;
         #endregion
 
         #region Properties
@@ -76,6 +78,13 @@ namespace Echo
             }
 
             _instance = this;
+
+            _data = gameObject.GetComponent<EchoData>();
+
+            if (_data == null)
+            {
+                Debug.LogError("Error : Could not find EchoData component on controller ! Please check the component is on the gameObject !");
+            }
         }
 
         #region Graph Generation / Init
@@ -92,6 +101,8 @@ namespace Echo
 
             if (_graphAjacentList != null)
                 _graphAjacentList.Clear();
+
+            List<DoNotModify.AsteroidView> asteroids = _data.GetAsteroids();
 
             _screenHalfSize = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
 
@@ -152,20 +163,12 @@ namespace Echo
 
                     bool walkable = true;
 
-                    Collider2D[] colliders = Physics2D.OverlapCircleAll(currentPosition, _asteroidCollisionRadiusCheck);
-
-                    if (colliders != null && colliders.Length > 0)
+                    foreach (DoNotModify.AsteroidView asteroid in asteroids)
                     {
-                        foreach (Collider2D collider in colliders)
+                        if (Vector2.Distance(asteroid.Position, currentPosition) < _asteroidCollisionRadiusCheck + asteroid.Radius)
                         {
-                            if (collider == null || collider.gameObject == null)
-                                continue;
-
-                            if (collider.gameObject.CompareTag("Asteroid"))
-                            {
-                                walkable = false;
-                                break;
-                            }
+                            walkable = false;
+                            break;
                         }
                     }
 
