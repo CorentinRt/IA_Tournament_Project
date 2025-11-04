@@ -5,7 +5,7 @@ using DoNotModify;
 namespace Echo
 {
     [TaskCategory("Echo")]
-    public class CheckEnergyForAction : Conditional
+    public class CheckEnergyForAction : EchoConditional
     {
         public enum ACTION
         {
@@ -21,8 +21,6 @@ namespace Echo
         [Tooltip("Minimum of energy to always keep")]
         public SharedFloat alwaysKeepEnergy = 0.4f; // voir si on met variable dans echo data si utilisée partout
 
-        private EchoData _echoData;
-
         private float _mineEnergyCost = 0.2f;
         private float _shootEnergyCost = 0.12f;
         private float _shockwaveEnergyCost = 0.4f;
@@ -33,8 +31,6 @@ namespace Echo
         public override void OnAwake()
         {
             base.OnAwake();
-
-            _echoData = GetComponent<EchoData>();
 
             _ourSpaceShip = _echoData.GetOurSpaceship();
         }

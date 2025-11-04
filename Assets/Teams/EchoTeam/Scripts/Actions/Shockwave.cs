@@ -3,19 +3,8 @@ using BehaviorDesigner.Runtime.Tasks;
 namespace Echo
 {
     [TaskCategory("Echo")]
-    public class Shockwave : Action
+    public class Shockwave : EchoAction
     {
-        // ----- FIELDS ----- //
-        private EchoController _echoController;
-        // ----- FIELDS ----- //
-
-        public override void OnAwake()
-        {
-            base.OnAwake();
-
-            _echoController = GetComponent<EchoController>();
-        }
-
         public override TaskStatus OnUpdate()
         {
             if (_echoController == null)

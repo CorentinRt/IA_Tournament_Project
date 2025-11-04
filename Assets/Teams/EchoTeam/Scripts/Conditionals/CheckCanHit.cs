@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Echo
 {
     [TaskCategory("Echo")]
-    public class CheckCanHit : Conditional
+    public class CheckCanHit : EchoConditional
     {
         public enum TARGET
         {
@@ -24,8 +24,6 @@ namespace Echo
         [Tooltip("Angle tolerance to hit mine (in degrees)")]
         public SharedFloat angleTolerance = 5f;
 
-        private EchoData _echoData;
-
         private SpaceShipView _ourSpaceship;
         private SpaceShipView _enemySpaceship;
         private List<MineView> _mines = new List<MineView>();
@@ -34,8 +32,6 @@ namespace Echo
         public override void OnAwake()
         {
             base.OnAwake();
-
-            _echoData = GetComponent<EchoData>();
 
             _ourSpaceship = _echoData.GetOurSpaceship();
             _enemySpaceship = _echoData.GetEnemySpaceship();

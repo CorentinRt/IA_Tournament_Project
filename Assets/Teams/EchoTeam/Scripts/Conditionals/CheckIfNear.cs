@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Echo
 {
     [TaskCategory("Echo")]
-    public class CheckIfNear : Conditional
+    public class CheckIfNear : EchoConditional
     {
         public enum TARGET
         {
@@ -22,8 +22,6 @@ namespace Echo
         [Tooltip("Max distance to check target")]
         public SharedFloat checkDistance = 0.4f;
 
-        private EchoData _echoData;
-
         private SpaceShipView _ourSpaceship;
         private SpaceShipView _enemySpaceship;
         private List<WayPointView> _waypoints = new List<WayPointView>();
@@ -34,7 +32,10 @@ namespace Echo
         {
             base.OnAwake();
 
-            _echoData = GetComponent<EchoData>();
+            _ourSpaceship = _echoData.GetOurSpaceship();
+            _enemySpaceship = _echoData.GetEnemySpaceship();
+            _waypoints = _echoData.GetWayPoints();
+            _mines = _echoData.GetMines();
         }
 
         public override TaskStatus OnUpdate()
