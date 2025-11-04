@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5100504329485691672}
   - component: {fileID: -4126076399028636266}
   - component: {fileID: 3039252958360588374}
+  - component: {fileID: -1026151362576228954}
   m_Layer: 0
   m_Name: EchoController
   m_TagString: Untagged
@@ -101,3 +102,15 @@ MonoBehaviour:
       Version: 1.7.12
   gizmoViewMode: 2
   showBehaviorDesignerGizmo: 1
+--- !u!114 &-1026151362576228954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7672329417856911656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94abe83b736eabd44a575e22145b9a31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

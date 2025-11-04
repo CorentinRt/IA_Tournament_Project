@@ -39,31 +39,47 @@ namespace Echo
         }
     }
 
-    public static class PathfindingNavigationGraph
+    public class PathfindingNavigationGraph : MonoBehaviour
     {
         #region Fields
-        private static Dictionary<Vector2, CellData> _graphCellList = new();
-        private static Dictionary<Vector2, List<CellData>> _graphAjacentList = new();
+        private static PathfindingNavigationGraph _instance;
 
-        private static bool _isInit = false;
+        private Dictionary<Vector2, CellData> _graphCellList = new();
+        private Dictionary<Vector2, List<CellData>> _graphAjacentList = new();
 
-        private static Vector2 _graphOrigin = new();
-        private static Vector3 _screenHalfSize = new();
+        private bool _isInit = false;
 
-        private static float _cellSize = 0.5f;
+        private Vector2 _graphOrigin = new();
+        private Vector3 _screenHalfSize = new();
 
-        private static float _asteroidCollisionRadiusCheck = 0.3f;
+        private float _cellSize = 0.5f;
+
+        private float _asteroidCollisionRadiusCheck = 0.3f;
         #endregion
 
         #region Properties
-        public static Dictionary<Vector2, CellData> GraphCellList => _graphCellList;
-        public static Dictionary<Vector2, List<CellData>> GraphAjacentList => _graphAjacentList;
+        public static PathfindingNavigationGraph Instance => _instance;
 
-        public static bool IsInit => _isInit;
+        public Dictionary<Vector2, CellData> GraphCellList => _graphCellList;
+        public Dictionary<Vector2, List<CellData>> GraphAjacentList => _graphAjacentList;
+
+        public bool IsInit => _isInit;
         #endregion
 
+        private void Awake()
+        {
+            if (_instance != null)
+            {
+                Debug.LogError("Error : try to create an already existing singleton ! Gameobject has been destroyed !");
+                Destroy(gameObject);
+                return;
+            }
+
+            _instance = this;
+        }
+
         #region Graph Generation / Init
-        public static void InitNavigationGraph(float baseCost = 1f)
+        public void InitNavigationGraph(float baseCost = 1f)
         {
             if (_graphCellList == null)
                 _graphCellList = new Dictionary<Vector2, CellData>();
@@ -162,7 +178,7 @@ namespace Echo
         #endregion
 
         #region Snap to grid
-        public static Vector2 SnapToGrid(Vector2 pos)
+        public Vector2 SnapToGrid(Vector2 pos)
         {
             float x = Mathf.Round(pos.x / _cellSize) * _cellSize;
             float y = Mathf.Round(pos.y / _cellSize) * _cellSize;
@@ -171,7 +187,7 @@ namespace Echo
         #endregion
 
         #region Get path / neighbors
-        public static bool IsWalkable(Vector2 position)
+        public bool IsWalkable(Vector2 position)
         {
             if (!_graphCellList.ContainsKey(SnapToGrid(position)))
                 return false;
@@ -179,7 +195,7 @@ namespace Echo
             return _graphCellList[position].Walkable;
         }
 
-        public static List<CellData> GetNeighbors(Vector2 cellPosition)
+        public List<CellData> GetNeighbors(Vector2 cellPosition)
         {
             if (_graphAjacentList == null || !_graphAjacentList.TryGetValue(SnapToGrid(cellPosition), out List<CellData> neighbors))
                 return new List<CellData>();
@@ -187,7 +203,7 @@ namespace Echo
             return neighbors;
         }
 
-        public static CellData GetCell(Vector2 cellPosition)
+        public CellData GetCell(Vector2 cellPosition)
         {
             cellPosition = SnapToGrid(cellPosition);
 
@@ -197,7 +213,7 @@ namespace Echo
             return startCell;
         }
 
-        public static List<CellData> FindPathTo(Vector2 startPosition, Vector2 targetPosition)
+        public List<CellData> FindPathTo(Vector2 startPosition, Vector2 targetPosition)
         {
             startPosition = SnapToGrid(startPosition);
             targetPosition = SnapToGrid(targetPosition);
@@ -310,7 +326,7 @@ namespace Echo
             return path;
         }
 
-        private static float Heuristic(CellData from, CellData to)
+        private float Heuristic(CellData from, CellData to)
         {
             float dx = to.Position.x - from.Position.x;
             float dy = to.Position.y - from.Position.y;

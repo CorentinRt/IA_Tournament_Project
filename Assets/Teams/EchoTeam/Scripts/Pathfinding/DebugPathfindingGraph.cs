@@ -18,6 +18,8 @@ namespace Echo
 
         private CellData _startCell;
         private CellData _endCell;
+
+        private PathfindingNavigationGraph _pathfindingNavigationGraph;
         #endregion
 
         #region Properties
@@ -27,19 +29,22 @@ namespace Echo
 
         private void Start()
         {
-            PathfindingNavigationGraph.InitNavigationGraph();
+            _pathfindingNavigationGraph = PathfindingNavigationGraph.Instance;
+
+            if (_pathfindingNavigationGraph != null)
+                _pathfindingNavigationGraph.InitNavigationGraph();
         }
 
         private void Update()
         {
-            if (!PathfindingNavigationGraph.IsInit)
+            if (_pathfindingNavigationGraph == null || !_pathfindingNavigationGraph.IsInit)
                 return;
 
             if (Input.GetMouseButtonDown(0))
             {
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-                _startCell = PathfindingNavigationGraph.GetCell(mousePos);
+                _startCell = _pathfindingNavigationGraph.GetCell(mousePos);
 
                 if (_startCell == null)
                 {
@@ -57,7 +62,7 @@ namespace Echo
             {
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-                _endCell = PathfindingNavigationGraph.GetCell(mousePos);
+                _endCell = _pathfindingNavigationGraph.GetCell(mousePos);
 
                 if (_endCell == null)
                 {
@@ -80,12 +85,12 @@ namespace Echo
                 return;
             }
 
-            _debugPath = PathfindingNavigationGraph.FindPathTo(_startCell.Position, _endCell.Position);
+            _debugPath = _pathfindingNavigationGraph.FindPathTo(_startCell.Position, _endCell.Position);
         }
 
         private void OnDrawGizmos()
         {
-            if (!PathfindingNavigationGraph.IsInit)
+            if (_pathfindingNavigationGraph == null || !_pathfindingNavigationGraph.IsInit)
                 return;
 
             DrawCellGizmos();
@@ -94,7 +99,7 @@ namespace Echo
 
         private void DrawCellGizmos()
         {
-            foreach (KeyValuePair<Vector2, CellData> pair in PathfindingNavigationGraph.GraphCellList)
+            foreach (KeyValuePair<Vector2, CellData> pair in _pathfindingNavigationGraph.GraphCellList)
             {
                 Vector2 position = pair.Key;
                 CellData cell = pair.Value;
@@ -116,7 +121,7 @@ namespace Echo
 
             Gizmos.color = _neighborColor;
 
-            foreach (KeyValuePair<Vector2, List<CellData>> pair in PathfindingNavigationGraph.GraphAjacentList)
+            foreach (KeyValuePair<Vector2, List<CellData>> pair in _pathfindingNavigationGraph.GraphAjacentList)
             {
                 foreach (CellData neighbor in pair.Value)
                 {
