@@ -7,13 +7,10 @@ namespace Echo
     public class LookAt : EchoAction
     {
         public SharedFloat targetOrientation;
-        public override void OnStart()
-        {
-            _echoController.GetInputDataByRef().targetOrientation  = targetOrientation.Value;
-        }
 
         public override TaskStatus OnUpdate()
         {
+            _echoController.GetInputDataByRef().targetOrientation  = targetOrientation.Value;
             return TaskStatus.Success;
         }
     } 

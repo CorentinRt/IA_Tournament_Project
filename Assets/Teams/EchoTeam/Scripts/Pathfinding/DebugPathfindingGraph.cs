@@ -48,7 +48,7 @@ namespace Echo
 
                 if (_startCell == null)
                 {
-                    Debug.LogError($"Error : No cell data associated found ! Maybe you clicked outside the map, or the graph isn't correctly snapped. In that case, please inform a programmer !", this);
+                    //Debug.LogError($"Error : No cell data associated found ! Maybe you clicked outside the map, or the graph isn't correctly snapped. In that case, please inform a programmer !", this);
                 }
                 else
                 {
@@ -66,7 +66,7 @@ namespace Echo
 
                 if (_endCell == null)
                 {
-                    Debug.LogError($"Error : No cell data associated found ! Maybe you clicked outside the map, or the graph isn't correctly snapped. In that case, please inform a programmer !", this);
+                    //Debug.LogError($"Error : No cell data associated found ! Maybe you clicked outside the map, or the graph isn't correctly snapped. In that case, please inform a programmer !", this);
                 }
                 else
                 {

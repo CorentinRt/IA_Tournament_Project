@@ -13,7 +13,7 @@ namespace Echo
         private GameManager _gameManager;
         // ----- FIELDS ----- //
 
-        private void Start()
+        public void InitData()
         {
             _gameManager = GameManager.Instance;
 
@@ -55,6 +55,16 @@ namespace Echo
         public List<MineView> GetMines()
         {
             return GetGameData().Mines;
+        }
+
+        public List<BulletView> GetBullets()
+        {
+            return GetGameData().Bullets;
+        }
+
+        public float GetShockwaveRadius()
+        {
+            return 2.2f;
         }
     }
 }

@@ -52,9 +52,9 @@ namespace Echo
         private Vector2 _graphOrigin = new();
         private Vector3 _screenHalfSize = new();
 
-        private float _cellSize = 0.5f;
+        [SerializeField] private float _cellSize = 0.5f;
 
-        private float _asteroidCollisionRadiusCheck = 0.3f;
+        [SerializeField] private float _asteroidCollisionRadiusCheck = 0.3f;
 
         private EchoData _data;
         #endregion
@@ -229,6 +229,12 @@ namespace Echo
 
             List<CellData> path = new List<CellData>();
 
+            if (startCell == targetCell)
+            {
+                path.Add(startCell);
+                return path;
+            }
+
             SortedSet<(float costHeuristic, CellData cellData)> unExplored = new SortedSet<(float, CellData)>(
                 Comparer<(float, CellData)>
                 .Create((a, b) => a.Item1 == b.Item1 ? a.Item2.GetHashCode().CompareTo(b.Item2.GetHashCode()) : a.Item1.CompareTo(b.Item1)));
@@ -250,11 +256,13 @@ namespace Echo
 
                 CellData currentCell = currentTuple.cellData;
 
+                /*
                 if (currentCell == null)
                 {
                     //Debug.Log($"No path possible to target : {targetCell.Name} from start : {startCell.Name}");
                     return path;
                 }
+                */
 
                 //Debug.Log($"Current cell: {currentCell.Name}");
 
@@ -313,6 +321,12 @@ namespace Echo
             path.Add(targetCell);
 
             //Debug.Log("Goal node : " + targetCell.Name);
+
+            if (!cellParent.ContainsKey(currentParent))
+            {
+
+                return path;
+            }
 
             while (currentParent != startCell)
             {
