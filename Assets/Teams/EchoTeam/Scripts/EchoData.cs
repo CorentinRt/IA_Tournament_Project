@@ -61,6 +61,11 @@ namespace Echo
         {
             return GetGameData().Bullets;
         }
+
+        public float GetShockwaveRadius()
+        {
+            return 2.2f;
+        }
     }
 }
 
