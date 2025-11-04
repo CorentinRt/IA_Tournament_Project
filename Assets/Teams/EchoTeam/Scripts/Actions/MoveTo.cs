@@ -2,11 +2,11 @@ using BehaviorDesigner.Runtime.Tasks;
 using DoNotModify;
 using NUnit.Framework;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace Echo
 {
-    [TaskCategory("Echo")]
     public class MoveTo : EchoAction
     {
         private enum MOVETO_TARGET
@@ -53,32 +53,15 @@ namespace Echo
             if (_ourSpaceShip == null || _enemySpaceShip == null || _navigationGraph == null)
                 return TaskStatus.Failure;
 
-            Vector2 targetPosition = Vector2.zero;
-
-            switch (_target)
-            {
-                case MOVETO_TARGET.ENEMY:
-                    targetPosition = _enemySpaceShip.Position;
-                    break;
-
-                case MOVETO_TARGET.NEAREST_POINT:
-
-                    break;
-            }
+            Vector2 targetPosition = GetTargetPosition();
 
             List<CellData> path = _navigationGraph.FindPathTo(_ourSpaceShip.Position, targetPosition);
 
-            if (path == null || path.Count <= 1)
-            {
-                if (path == null)
-                {
-                    return TaskStatus.Failure;
-                }
+            if (path == null)
+                return TaskStatus.Failure;
 
-                if (path.Count <= 1)
-                //Debug.LogWarning("Warning : Try find path not existing !");
+            if (path.Count <= 1)
                 return TaskStatus.Success;
-            }
 
             CellData nextCellData = path[1];
 
@@ -86,8 +69,18 @@ namespace Echo
 
             Vector2 normalizedDir = dir.normalized;
 
-            float targetOrientation = AimingHelpers.ComputeSteeringOrient(_ourSpaceShip, _ourSpaceShip.Position + dir, 1.2f); ;
-            //float targetOrientation = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
+            float targetOrientation = AimingHelpers.ComputeSteeringOrient(_ourSpaceShip, _ourSpaceShip.Position + dir, 1.2f);
+
+            Vector2 targetOrientationVector = Vector2.up;
+
+            // Debug computeSteeringOrient
+            {
+                targetOrientationVector.x = targetOrientationVector.x * Mathf.Cos(targetOrientation * Mathf.Deg2Rad) - targetOrientationVector.y * Mathf.Sin(targetOrientation * Mathf.Deg2Rad);
+
+                targetOrientationVector.y = targetOrientationVector.x * Mathf.Cos(targetOrientation * Mathf.Deg2Rad) + targetOrientationVector.y * Mathf.Sin(targetOrientation * Mathf.Deg2Rad);
+
+                //Debug.DrawLine(_ourSpaceShip.Position, _ourSpaceShip.Position + targetOrientationVector * 5f, Color.red, 2f);
+            }
 
             float currentOrientation = _echoController.GetInputDataByRef().targetOrientation;
 
@@ -95,8 +88,7 @@ namespace Echo
 
             float orientationGap = Mathf.Abs(targetOrientation - currentOrientation);
 
-            //float thrustPercent = Mathf.Lerp(1f, 0.1f, orientationGap / 360f);
-            float thrustPercent = 1f;
+            float thrustPercent = Mathf.Lerp(1f, 0.1f, orientationGap / 360f);
 
             Vector2 normalizedVelocity = _ourSpaceShip.Velocity.normalized;
 
@@ -111,6 +103,21 @@ namespace Echo
             _echoController.GetInputDataByRef().thrust = thrustPercent;
 
             return TaskStatus.Running;
+        }
+
+        private Vector2 GetTargetPosition()
+        {
+            switch (_target)
+            {
+                case MOVETO_TARGET.ENEMY:
+                    return _enemySpaceShip.Position;
+
+                case MOVETO_TARGET.NEAREST_POINT:
+
+                    break;
+            }
+
+            return Vector2.zero;
         }
     }
 }
