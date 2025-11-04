@@ -57,7 +57,7 @@ namespace Echo
                 case TARGET.MINE:
                     foreach (MineView mine in _mines)
                     {
-                        canHit = AimingHelpers.CanHit(_ourSpaceship, mine.Position, angleTolerance.Value)
+                        canHit = AimingHelpers.CanHit(_ourSpaceship, mine.Position, angleTolerance.Value);
                         if (canHit)
                         {
                             break;
