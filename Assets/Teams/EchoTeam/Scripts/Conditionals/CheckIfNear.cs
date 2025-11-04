@@ -17,10 +17,10 @@ namespace Echo
 
         // ----- FIELDS ----- //
         [Tooltip("Target to check radius")]
-        public TARGET TargetToCheck = TARGET.ENEMY;
+        public TARGET targetToCheck = TARGET.ENEMY;
 
         [Tooltip("Max distance to check target")]
-        public SharedFloat CheckDistance = 0.4f;
+        public SharedFloat checkDistance = 0.4f;
 
         private EchoData _echoData;
         // ----- FIELDS ----- //
@@ -48,18 +48,18 @@ namespace Echo
             float distance = 0f;
             bool isNear = false;
 
-            switch (TargetToCheck)
+            switch (targetToCheck)
             {
                 case TARGET.ENEMY:
                     distance = UnityEngine.Vector3.Distance(ourSpaceShip.Position, enemySpaceShip.Position);
-                    isNear = distance <= CheckDistance.Value;
+                    isNear = distance <= checkDistance.Value;
                     break;
 
                 case TARGET.WAYPOINT:
                     foreach (WayPointView waypoint in wayPoints)
                     {
                         distance = UnityEngine.Vector3.Distance(ourSpaceShip.Position, waypoint.Position);
-                        if (distance <= CheckDistance.Value)
+                        if (distance <= checkDistance.Value)
                         {
                             isNear = true;
                             break;
@@ -71,7 +71,7 @@ namespace Echo
                     foreach (MineView mine in mines)
                     {
                         distance = UnityEngine.Vector3.Distance(ourSpaceShip.Position, mine.Position);
-                        if (distance <= CheckDistance.Value)
+                        if (distance <= checkDistance.Value)
                         {
                             isNear = true;
                             break;

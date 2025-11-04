@@ -3,7 +3,7 @@ using BehaviorDesigner.Runtime.Tasks;
 namespace Echo
 {
     [TaskCategory("Echo")]
-    public class Shockwave : Action
+    public class DropMine : Action
     {
         // ----- FIELDS ----- //
         private EchoController _echoController;
@@ -20,17 +20,18 @@ namespace Echo
         {
             if (_echoController == null)
             {
-                UnityEngine.Debug.LogError("Couldn't find echo controller in shockwave.");
+                UnityEngine.Debug.LogError("Couldn't find echo controller in drop mine.");
                 return TaskStatus.Failure;
             }
 
-            _echoController.GetInputDataByRef().fireShockwave = true;
+            _echoController.GetInputDataByRef().dropMine = true;
 
             return TaskStatus.Success;
         }
     }
+}
 
-    
+{
 
-
+}
 }
