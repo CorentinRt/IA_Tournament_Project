@@ -100,12 +100,39 @@ namespace Echo
 
         private Vector2 GetTargetPosition()
         {
+            WayPointView waypointView = null;
+
             switch (_target)
             {
                 case MOVETO_TARGET.ENEMY:
                     return _enemySpaceShip.Position;
 
-                case MOVETO_TARGET.NEAREST_POINT:
+                case MOVETO_TARGET.NEAREST_WAYPOINT:
+                    waypointView = _echoData.GetNearestWayPoint();
+
+                    if (waypointView != null)
+                        return waypointView.Position;
+
+                    break;
+
+                case MOVETO_TARGET.NEAREST_WAYPOINT_NEUTRAL:
+                    waypointView = _echoData.GetNearestNeutralOrEnemyWayPoint();
+
+                    if (waypointView != null)
+                        return waypointView.Position;
+
+                    break;
+
+                case MOVETO_TARGET.NEAREST_WAYPOINT_ENEMY:
+                    waypointView = _echoData.GetNearestEnemyWayPoint();
+
+                    if (waypointView != null)
+                        return waypointView.Position;
+
+                    waypointView = _echoData.GetNearestNeutralOrEnemyWayPoint();
+
+                    if (waypointView != null)
+                        return waypointView.Position;
 
                     break;
             }

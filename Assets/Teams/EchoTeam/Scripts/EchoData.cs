@@ -1,4 +1,5 @@
 using DoNotModify;
+using IIM;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -77,6 +78,81 @@ namespace Echo
             }
             
             return closestMine;
+        }
+
+        public WayPointView GetNearestWayPoint()
+        {
+            SpaceShipView ourSpaceship = GetOurSpaceship();
+            List<WayPointView> waypoints = GetWayPoints();
+
+            if (waypoints.Count == 0)
+                return null;
+
+            WayPointView nearestWaypoint = waypoints[0];
+            float nearestDistance = Vector2.Distance(waypoints[0].Position, ourSpaceship.Position);
+
+            foreach (WayPointView waypoint in waypoints)
+            {
+                float distance = UnityEngine.Vector3.Distance(ourSpaceship.Position, waypoint.Position);
+                if (distance <= nearestDistance)
+                {
+                    nearestWaypoint = waypoint;
+                }
+            }
+
+            return nearestWaypoint;
+        }
+
+        public WayPointView GetNearestEnemyWayPoint()
+        {
+            SpaceShipView ourSpaceship = GetOurSpaceship();
+            List<WayPointView> waypoints = GetWayPoints();
+
+            if (waypoints.Count == 0)
+                return null;
+
+            WayPointView nearestWaypoint = null;
+            float nearestDistance = Mathf.Infinity;
+
+            foreach (WayPointView waypoint in waypoints)
+            {
+                if (waypoint.Owner == ourSpaceship.Owner ||waypoint.Owner == -1)
+                    continue;
+
+                float distance = UnityEngine.Vector3.Distance(ourSpaceship.Position, waypoint.Position);
+                if (distance <= nearestDistance)
+                {
+                    nearestWaypoint = waypoint;
+                }
+            }
+
+            return nearestWaypoint;
+        }
+
+        public WayPointView GetNearestNeutralOrEnemyWayPoint()
+        {
+            SpaceShipView ourSpaceship = GetOurSpaceship();
+            List<WayPointView> waypoints = GetWayPoints();
+
+            if (waypoints.Count == 0)
+                return null;
+
+            WayPointView nearestWaypoint = null;
+            float nearestDistance = Mathf.Infinity;
+
+            foreach (WayPointView waypoint in waypoints)
+            {
+                if (waypoint.Owner == ourSpaceship.Owner)
+                    continue;
+
+                float distance = UnityEngine.Vector3.Distance(ourSpaceship.Position, waypoint.Position);
+                if (distance <= nearestDistance)
+                {
+                    nearestWaypoint = waypoint;
+                }
+            }
+
+            return nearestWaypoint;
         }
 
         public List<BulletView> GetBullets()
