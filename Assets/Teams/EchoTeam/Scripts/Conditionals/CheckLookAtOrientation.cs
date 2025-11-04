@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Echo
 {
-    public class CheckLookAt : EchoConditional
+    public class CheckLookAtOrientation : EchoConditional
     {
         public SharedFloat tolerance;
         

@@ -73,34 +73,28 @@ namespace Echo
 
             Vector2 targetOrientationVector = Vector2.up;
 
-            // Debug computeSteeringOrient
+            Vector2 velocity = _ourSpaceShip.Velocity;
+
+            Vector2 velocityDiffAngleVector = normalizedDir - velocity.normalized;
+            velocityDiffAngleVector.Normalize();
+
+            float velocityDiffAngle = Mathf.Abs(Mathf.Atan2(velocityDiffAngleVector.y, velocityDiffAngleVector.x) * Mathf.Rad2Deg);
+
+            float thrustPercent = 0f;
+
+            float dotProduct = velocity.x * dir.y + velocity.y * dir.x;
+
+            Debug.DrawRay(_ourSpaceShip.Position, normalizedDir * 2f, Color.red);
+            Debug.DrawRay(_ourSpaceShip.Position, velocity.normalized * 2f, Color.green);
+
+            if (velocityDiffAngle > 10f || velocity.magnitude < _ourSpaceShip.SpeedMax - 0.5f || dotProduct < 0)
             {
-                targetOrientationVector.x = targetOrientationVector.x * Mathf.Cos(targetOrientation * Mathf.Deg2Rad) - targetOrientationVector.y * Mathf.Sin(targetOrientation * Mathf.Deg2Rad);
-
-                targetOrientationVector.y = targetOrientationVector.x * Mathf.Cos(targetOrientation * Mathf.Deg2Rad) + targetOrientationVector.y * Mathf.Sin(targetOrientation * Mathf.Deg2Rad);
-
-                //Debug.DrawLine(_ourSpaceShip.Position, _ourSpaceShip.Position + targetOrientationVector * 5f, Color.red, 2f);
+                thrustPercent = Mathf.Lerp(1f, 0.5f, velocityDiffAngle / 140f);
             }
-
-            float currentOrientation = _echoController.GetInputDataByRef().targetOrientation;
-
-            _echoController.GetInputDataByRef().targetOrientation = targetOrientation;
-
-            float orientationGap = Mathf.Abs(targetOrientation - currentOrientation);
-
-            float thrustPercent = Mathf.Lerp(1f, 0.1f, orientationGap / 360f);
-
-            Vector2 normalizedVelocity = _ourSpaceShip.Velocity.normalized;
-
-            Vector2 differenceVelocityDir = normalizedVelocity - normalizedDir;
-            differenceVelocityDir.Normalize();
-
-            if (Mathf.Abs(Mathf.Atan2(differenceVelocityDir.y, differenceVelocityDir.x) * Mathf.Rad2Deg) < 5f && _ourSpaceShip.Velocity.magnitude >= _ourSpaceShip.SpeedMax)
-            {
-                thrustPercent = 0f;
-            }
-
+            
+            
             _echoController.GetInputDataByRef().thrust = thrustPercent;
+            _echoController.GetInputDataByRef().targetOrientation = targetOrientation;
 
             return TaskStatus.Running;
         }

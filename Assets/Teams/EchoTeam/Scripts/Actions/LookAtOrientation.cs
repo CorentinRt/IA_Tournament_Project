@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Echo
 {
-    public class LookAt : EchoAction
+    public class LookAtOrientation : EchoAction
     {
         public SharedFloat targetOrientation;
 
