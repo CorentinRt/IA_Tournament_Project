@@ -57,6 +57,28 @@ namespace Echo
             return GetGameData().Mines;
         }
 
+        public MineView GetNearestMine()
+        {
+            SpaceShipView ourSpaceship = GetOurSpaceship();
+            List<MineView> mines = GetMines();
+            
+            if(mines.Count == 0) return null;
+            
+            MineView closestMine = mines[0];
+            float closestDistance = Vector2.Distance(closestMine.Position, ourSpaceship.Position);
+            foreach (MineView mine in mines)
+            {
+                float tempDistance = Vector2.Distance(mine.Position, ourSpaceship.Position);
+                if (tempDistance < closestDistance)
+                {
+                    closestDistance = tempDistance;
+                    closestMine = mine;
+                }
+            }
+            
+            return closestMine;
+        }
+
         public List<BulletView> GetBullets()
         {
             return GetGameData().Bullets;
