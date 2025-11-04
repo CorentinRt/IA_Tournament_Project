@@ -10,7 +10,7 @@ namespace Echo
     {
         None = -1,
         EnemyShip = 0,
-        ClosestMine = 1
+        NearestMine = 1
     }
     
     public class LookAtTarget : EchoAction
@@ -26,8 +26,8 @@ namespace Echo
                     return TaskStatus.Success;
                 case LookAtTargetType.EnemyShip:
                     return LookAtEnemyShip();
-                case LookAtTargetType.ClosestMine:
-                    return LookAtClosestMine();
+                case LookAtTargetType.NearestMine:
+                    return LookAtNearestMine();
                 default:
                     return TaskStatus.Success;
             }
@@ -42,13 +42,13 @@ namespace Echo
             return LookAtTargetPosition(ourSpaceship, enemySpaceship.Position);
         } 
         
-        private TaskStatus LookAtClosestMine()
+        private TaskStatus LookAtNearestMine()
         {
             // Get our spaceship
             SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
             
             // Get closest mine
-            MineView closestMine = _echoData.GetClosestMine();
+            MineView closestMine = _echoData.GetNearestMine();
             
             return LookAtTargetPosition(ourSpaceship,  closestMine.Position);
         }
