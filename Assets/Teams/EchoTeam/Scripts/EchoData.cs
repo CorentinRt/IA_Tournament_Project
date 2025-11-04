@@ -56,6 +56,11 @@ namespace Echo
         {
             return GetGameData().Mines;
         }
+
+        public List<BulletView> GetBullets()
+        {
+            return GetGameData().Bullets;
+        }
     }
 }
 

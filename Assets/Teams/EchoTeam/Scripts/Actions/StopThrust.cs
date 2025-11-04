@@ -4,13 +4,9 @@ namespace Echo
 {
     public class StopThrust : EchoAction
     {
-        public override void OnStart()
-        {
-            _echoController.GetInputDataByRef().thrust = 0;
-        }
-
         public override TaskStatus OnUpdate()
         {
+            _echoController.GetInputDataByRef().thrust = 0;
             return TaskStatus.Success;
         }
     }
