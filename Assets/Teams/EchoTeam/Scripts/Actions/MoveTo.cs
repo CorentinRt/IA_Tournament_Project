@@ -7,13 +7,17 @@ using UnityEngine;
 namespace Echo
 {
     [TaskCategory("Echo")]
-    public class MoveToEnemy : Action
+    public class MoveTo : EchoAction
     {
-        private EchoController _controller;
+        private enum MOVETO_TARGET
+        {
+            ENEMY = 0,
+            NEAREST_POINT = 1
+        }
+
+        [SerializeField] private MOVETO_TARGET _target;
 
         private PathfindingNavigationGraph _navigationGraph;
-
-        private EchoData _data;
 
         private SpaceShipView _ourSpaceShip;
         private SpaceShipView _enemySpaceShip;
@@ -22,22 +26,12 @@ namespace Echo
         {
             base.OnAwake();
 
-            _controller = GetComponent<EchoController>();
-
-            if (_controller == null)
-                Debug.LogError("Error : no controller found");
-
-            _data = GetComponent<EchoData>();
-
-            if (_data == null)
-                Debug.LogError("Error : no data found on controller");
-
-            _ourSpaceShip = _data.GetOurSpaceship();
+            _ourSpaceShip = _echoData.GetOurSpaceship();
 
             if (_ourSpaceShip == null)
                 Debug.LogError("No our spaceShip found in gameData");
 
-            _enemySpaceShip = _data.GetEnemySpaceship();
+            _enemySpaceShip = _echoData.GetEnemySpaceship();
 
             if (_enemySpaceShip == null)
                 Debug.LogError("No enemy spaceShip found in gameData");
@@ -59,7 +53,20 @@ namespace Echo
             if (_ourSpaceShip == null || _enemySpaceShip == null || _navigationGraph == null)
                 return TaskStatus.Failure;
 
-            List<CellData> path = _navigationGraph.FindPathTo(_ourSpaceShip.Position, _enemySpaceShip.Position);
+            Vector2 targetPosition = Vector2.zero;
+
+            switch (_target)
+            {
+                case MOVETO_TARGET.ENEMY:
+                    targetPosition = _enemySpaceShip.Position;
+                    break;
+
+                case MOVETO_TARGET.NEAREST_POINT:
+
+                    break;
+            }
+
+            List<CellData> path = _navigationGraph.FindPathTo(_ourSpaceShip.Position, targetPosition);
 
             if (path == null || path.Count <= 1)
             {
@@ -69,7 +76,7 @@ namespace Echo
                 }
 
                 if (path.Count <= 1)
-                Debug.LogWarning("Warning : Try find path not existing !");
+                //Debug.LogWarning("Warning : Try find path not existing !");
                 return TaskStatus.Success;
             }
 
@@ -79,15 +86,17 @@ namespace Echo
 
             Vector2 normalizedDir = dir.normalized;
 
-            float targetOrientation = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
+            float targetOrientation = AimingHelpers.ComputeSteeringOrient(_ourSpaceShip, _ourSpaceShip.Position + dir, 1.2f); ;
+            //float targetOrientation = Mathf.Atan2(normalizedDir.y, normalizedDir.x) * Mathf.Rad2Deg;
 
-            float currentOrientation = _controller.GetInputDataByRef().targetOrientation;
+            float currentOrientation = _echoController.GetInputDataByRef().targetOrientation;
 
-            _controller.GetInputDataByRef().targetOrientation = targetOrientation;
+            _echoController.GetInputDataByRef().targetOrientation = targetOrientation;
 
             float orientationGap = Mathf.Abs(targetOrientation - currentOrientation);
 
-            float thrustPercent = Mathf.Lerp(1f, 0.1f, orientationGap / 360f);
+            //float thrustPercent = Mathf.Lerp(1f, 0.1f, orientationGap / 360f);
+            float thrustPercent = 1f;
 
             Vector2 normalizedVelocity = _ourSpaceShip.Velocity.normalized;
 
@@ -99,13 +108,9 @@ namespace Echo
                 thrustPercent = 0f;
             }
 
-            AimingHelpers.ComputeSteeringOrient(_ourSpaceShip, _ourSpaceShip.Position + dir, 2f);
-
-            _controller.GetInputDataByRef().thrust = thrustPercent;
+            _echoController.GetInputDataByRef().thrust = thrustPercent;
 
             return TaskStatus.Running;
-
-            return base.OnUpdate();
         }
     }
 }
