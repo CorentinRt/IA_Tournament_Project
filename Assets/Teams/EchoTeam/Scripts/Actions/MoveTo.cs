@@ -12,7 +12,9 @@ namespace Echo
         private enum MOVETO_TARGET
         {
             ENEMY = 0,
-            NEAREST_POINT = 1
+            NEAREST_WAYPOINT = 1,
+            NEAREST_WAYPOINT_NEUTRAL = 2,
+            NEAREST_WAYPOINT_ENEMY = 3
         }
 
         [SerializeField] private MOVETO_TARGET _target;

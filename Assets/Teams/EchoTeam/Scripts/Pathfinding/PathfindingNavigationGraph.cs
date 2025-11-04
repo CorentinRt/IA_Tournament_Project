@@ -8,25 +8,30 @@ namespace Echo
     {
         public CellData(Vector2 position, bool walkable = true, int cost = 1)
         {
-            this.position = position;
-            this.walkable = walkable;
-            this.cost = cost;
+            this._position = position;
+            this._walkable = walkable;
+            this._cost = cost;
         }
 
-        private Vector2 position;
-        private bool walkable;
-        private int cost;
+        private Vector2 _position;
+        private bool _walkable;
+        private int _cost;
 
-        public Vector2 Position => this.position;
-        public bool Walkable => this.walkable;
+        public Vector2 Position { get => _position; set => _position = value; }
+        public bool Walkable { get => _walkable; set => _walkable = value; }
         public int Cost
         {
             get
             {
-                if (!walkable)
+                if (!_walkable)
                     return 1000;
 
-                return this.cost;
+                return this._cost;
+            }
+
+            set
+            {
+                _cost = value;
             }
         }
 
@@ -34,7 +39,7 @@ namespace Echo
         {
             get
             {
-                return $"Cell x : {position.x} , y = {position.y}";
+                return $"Cell x : {_position.x} , y = {_position.y}";
             }
         }
     }
@@ -54,7 +59,11 @@ namespace Echo
 
         [SerializeField] private float _cellSize = 0.5f;
 
+        [Header("Asteroids")]
         [SerializeField] private float _asteroidCollisionRadiusCheck = 0.3f;
+
+        [Header("Waypoints")]
+        [SerializeField] private float _waypointRadiusCheck = 0.3f;
 
         private EchoData _data;
         #endregion
@@ -88,7 +97,7 @@ namespace Echo
         }
 
         #region Graph Generation / Init
-        public void InitNavigationGraph(float baseCost = 1f)
+        public void InitNavigationGraph()
         {
             if (_graphCellList == null)
                 _graphCellList = new Dictionary<Vector2, CellData>();
@@ -103,6 +112,7 @@ namespace Echo
                 _graphAjacentList.Clear();
 
             List<DoNotModify.AsteroidView> asteroids = _data.GetAsteroids();
+            List<DoNotModify.WayPointView> wayPoints = _data.GetWayPoints();
 
             _screenHalfSize = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
 
@@ -111,25 +121,14 @@ namespace Echo
             float width = _screenHalfSize.x * 2f;
             float height = _screenHalfSize.y * 2f;
 
-
+            // Init Dictionary with CellDatas
             for (float x = 0; x < width; x += _cellSize)
             {
                 for (float y = 0; y < height; y += _cellSize)
                 {
                     Vector2 currentPosition = SnapToGrid(_graphOrigin + new Vector2(x, y));
 
-                    bool walkable = true;
-                    Collider2D[] colliders = Physics2D.OverlapCircleAll(currentPosition, _asteroidCollisionRadiusCheck);
-                    foreach (var c in colliders)
-                    {
-                        if (c != null && c.gameObject != null && c.gameObject.CompareTag("Asteroid"))
-                        {
-                            walkable = false;
-                            break;
-                        }
-                    }
-
-                    _graphCellList[currentPosition] = new CellData(currentPosition, walkable);
+                    _graphCellList[currentPosition] = new CellData(currentPosition);
                 }
             }
 
@@ -163,6 +162,8 @@ namespace Echo
 
                     bool walkable = true;
 
+                    int cost = 2;
+
                     foreach (DoNotModify.AsteroidView asteroid in asteroids)
                     {
                         if (Vector2.Distance(asteroid.Position, currentPosition) < _asteroidCollisionRadiusCheck + asteroid.Radius)
@@ -172,7 +173,19 @@ namespace Echo
                         }
                     }
 
-                    _graphCellList[currentPosition] = new CellData(currentPosition, walkable);
+                    foreach (DoNotModify.WayPointView wayPoint in wayPoints)
+                    {
+                        if (Vector2.Distance(wayPoint.Position, currentPosition) < _waypointRadiusCheck + wayPoint.Radius)
+                        {
+                            Debug.Log("Set cost to 1");
+                            cost = 1;
+                            break;
+                        }
+                    }
+
+                    _graphCellList[currentPosition].Position = currentPosition;
+                    _graphCellList[currentPosition].Walkable = walkable;
+                    _graphCellList[currentPosition].Cost = cost;
                 }
             }
 
