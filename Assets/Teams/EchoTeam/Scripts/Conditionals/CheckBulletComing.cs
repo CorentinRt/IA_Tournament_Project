@@ -11,12 +11,25 @@ namespace Echo
     {
         public SharedFloat checkRadius;
         public SharedFloat tolerance;
-        
+
+        public override void OnAwake()
+        {
+            base.OnAwake();
+            
+            _echoDebug.AddCircle(
+                "BulletComingCheckRadius", 
+                _echoData.GetOurSpaceship().Position,
+                checkRadius.Value,
+                Color.yellow);
+        }
+
         public override TaskStatus OnUpdate()
         {
             List<BulletView> bullets = _echoData.GetBullets();
             SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
 
+            _echoDebug.UpdateDebugCirclePosition("BulletComingCheckRadius", ourSpaceship.Position);
+            
             foreach (BulletView bullet in bullets)
             {
                 if(Vector2.Distance(bullet.Position, ourSpaceship.Position) > checkRadius.Value) continue;
