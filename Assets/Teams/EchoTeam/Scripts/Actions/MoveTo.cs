@@ -58,6 +58,8 @@ namespace Echo
 
             if (_navigationGraph == null)
                 Debug.LogError("Error : no navigation graph found");
+
+            _echoDebug.AddCircle("MoveToSuccessCheck", _ourSpaceShip.Position, distanceToleranceToSuccess.Value, Color.green);
         }
 
         public override void OnStart()
@@ -73,6 +75,8 @@ namespace Echo
 
             Vector2 targetPosition = GetTargetPosition();
             List<CellData> path = _navigationGraph.FindPathTo(_ourSpaceShip.Position, targetPosition);
+
+            _echoDebug.UpdateDebugCirclePosition("MoveToSuccessCheck", targetPosition);
 
             if (path == null)
                 return TaskStatus.Failure;
@@ -104,6 +108,7 @@ namespace Echo
 
             if (Vector2.Distance(_ourSpaceShip.Position, targetPosition) < distanceToleranceToSuccess.Value)
             {
+                
                 return TaskStatus.Success;
             }
 
