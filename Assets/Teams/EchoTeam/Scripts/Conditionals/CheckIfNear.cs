@@ -25,6 +25,8 @@ namespace Echo
 
         private SpaceShipView _ourSpaceship;
         private SpaceShipView _enemySpaceship;
+
+        private string _debugCircleName;
         // ----- FIELDS ----- //
 
         public override void OnAwake()
@@ -34,7 +36,7 @@ namespace Echo
             _ourSpaceship = _echoData.GetOurSpaceship();
             _enemySpaceship = _echoData.GetEnemySpaceship();
 
-            _echoDebug.AddCircle("CheckIfNearRadius", _ourSpaceship.Position, checkDistance.Value, UnityEngine.Color.blue);
+            _debugCircleName = _echoDebug.AddCircle("CheckIfNearRadius", _ourSpaceship.Position, checkDistance.Value, UnityEngine.Color.blue, true);
         }
 
         public override TaskStatus OnUpdate()
@@ -45,7 +47,7 @@ namespace Echo
                 return TaskStatus.Failure;
             }
 
-            _echoDebug.UpdateDebugCirclePosition("CheckIfNearRadius", _ourSpaceship.Position);
+            _echoDebug.UpdateDebugCirclePosition(_debugCircleName, _ourSpaceship.Position);
 
             float distance = 0f;
             bool isNear = false;

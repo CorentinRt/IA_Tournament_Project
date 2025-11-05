@@ -14,16 +14,28 @@ public class EchoDebug : MonoBehaviour
     private Dictionary<string, CircleData> _circles = new Dictionary<string, CircleData> ();
     // ----- FIELDS ----- //
 
-    public void AddCircle(string name, Vector3 center, float radius, Color color)
+    public string AddCircle(string name, Vector3 center, float radius, Color color, bool canHaveMultiple = false)
     {
-        if (_circles.ContainsKey(name)) return;
+        if (!canHaveMultiple && _circles.ContainsKey(name)) return "";
 
-        _circles.Add(name, (new CircleData
+        string newName = name;
+        int index = 0;
+
+        // If multiple circles with same name
+        while (_circles.ContainsKey(newName))
+        {
+            index++;
+            newName = $"{name}_{index}";
+        }
+
+        _circles.Add(newName, (new CircleData
         {
             Center = center,
             Radius = radius,
             Color = color,
         }));
+
+        return newName;
     }
 
     public void UpdateDebugCirclePosition(string name, Vector3 position)
