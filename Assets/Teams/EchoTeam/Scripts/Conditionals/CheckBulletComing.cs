@@ -10,7 +10,7 @@ namespace Echo
     public class CheckBulletComing : EchoConditional
     {
         public SharedFloat checkRadius;
-        public SharedFloat tolerance;
+        public SharedFloat timingTolerance;
 
         public override void OnAwake()
         {
@@ -21,6 +21,10 @@ namespace Echo
                 _echoData.GetOurSpaceship().Position,
                 checkRadius.Value,
                 Color.yellow);
+            _echoDebug.AddCircle("BulletShipIntersection",
+                _echoData.GetOurSpaceship().Position,
+                0.5f,
+                Color.green);
         }
 
         public override TaskStatus OnUpdate()
@@ -29,6 +33,7 @@ namespace Echo
             SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
 
             _echoDebug.UpdateDebugCirclePosition("BulletComingCheckRadius", ourSpaceship.Position);
+            _echoDebug.UpdateDebugCirclePosition("BulletShipIntersection", ourSpaceship.Position);
             
             foreach (BulletView bullet in bullets)
             {
@@ -37,6 +42,8 @@ namespace Echo
                 //Compute intersection between bullet line and ship line, if no intersection we continue to next bullet
                 if(!AimingHelpers.ComputeIntersection(bullet.Position, bullet.Velocity.normalized, ourSpaceship.Position, ourSpaceship.Velocity.normalized, out Vector2 intersection)) continue;
 
+                _echoDebug.UpdateDebugCirclePosition("BulletShipIntersection", intersection);
+                
                 //Compute Time to intersection point for ship and bullet
                 float shipDistanceToIntersection = Vector2.Distance(intersection, ourSpaceship.Position);
                 float shipTimeToIntersection = ourSpaceship.Velocity.magnitude / shipDistanceToIntersection;
@@ -45,7 +52,7 @@ namespace Echo
                 float bulletTimeToIntersection = bullet.Velocity.magnitude / bulletDistanceToIntersection;
 
                 //Check if time for bullet to arrive to point = time for ship to arrive at same point (with tolerance)
-                if (Mathf.Abs(shipTimeToIntersection - bulletTimeToIntersection) <= tolerance.Value)
+                if (Mathf.Abs(shipTimeToIntersection - bulletTimeToIntersection) <= timingTolerance.Value)
                     return TaskStatus.Success;
             }
             
