@@ -20,6 +20,8 @@ namespace Echo
 
         [SerializeField] private MOVETO_TARGET _target;
 
+        [SerializeField] private SharedFloat _distanceMaxPredition = 3f;
+
         public SharedFloat distanceToleranceToSuccess;
 
         private PathfindingNavigationGraph _navigationGraph;
@@ -223,6 +225,11 @@ namespace Echo
             switch (_target)
             {
                 case MOVETO_TARGET.ENEMY:
+                    if (Vector2.Distance(_ourSpaceShip.Position, _enemySpaceShip.Position) > _distanceMaxPredition.Value)
+                    {
+                        return _ourSpaceShip.Position;
+                    }
+
                     return ComputePredictionToSpaceship(_ourSpaceShip, _enemySpaceShip.Position, _enemySpaceShip.Velocity, _echoData.HitTimeTolerance);
 
                 case MOVETO_TARGET.NEAREST_WAYPOINT:
