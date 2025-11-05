@@ -1,3 +1,4 @@
+using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
 using DoNotModify;
 using UnityEngine;
@@ -6,6 +7,8 @@ namespace Echo
 {
     public class Flee : EchoAction
     {
+        public SharedFloat checkRadius;
+        public SharedFloat tolerance;
         private SpaceShipView _ourSpaceShip;
 
         public override void OnAwake()
@@ -26,7 +29,7 @@ namespace Echo
             if (_ourSpaceShip == null)
                 return TaskStatus.Failure;
 
-
+            //BulletView dangerBullet = 
 
         }
     }
