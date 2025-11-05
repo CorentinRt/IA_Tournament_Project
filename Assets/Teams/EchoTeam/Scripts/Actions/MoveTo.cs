@@ -1,3 +1,4 @@
+using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
 using DoNotModify;
 using NUnit.Framework;
@@ -18,6 +19,8 @@ namespace Echo
         }
 
         [SerializeField] private MOVETO_TARGET _target;
+
+        public SharedFloat distanceToleranceToSuccess;
 
         private PathfindingNavigationGraph _navigationGraph;
 
@@ -98,6 +101,11 @@ namespace Echo
             // Compute dir to Predicted pos
             Vector2 toPredicted = predictedPoint - _ourSpaceShip.Position;
             Vector2 dir = toPredicted.normalized;
+
+            if (toPredicted.magnitude < distanceToleranceToSuccess.Value)
+            {
+                return TaskStatus.Success;
+            }
 
             float targetOrientation = AimingHelpers.ComputeSteeringOrient(_ourSpaceShip, _ourSpaceShip.Position + dir, 1.2f);
 
