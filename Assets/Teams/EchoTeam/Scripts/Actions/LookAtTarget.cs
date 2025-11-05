@@ -38,7 +38,7 @@ namespace Echo
             // Get both spaceships
             SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
             SpaceShipView enemySpaceship = _echoData.GetEnemySpaceship();
-
+            
             return LookAtTargetPosition(ourSpaceship, enemySpaceship.Position);
         } 
         
