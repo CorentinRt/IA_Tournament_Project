@@ -47,8 +47,6 @@ namespace Echo
     public class PathfindingNavigationGraph : MonoBehaviour
     {
         #region Fields
-        private static PathfindingNavigationGraph _instance;
-
         private Dictionary<Vector2, CellData> _graphCellList = new();
         private Dictionary<Vector2, List<CellData>> _graphAjacentList = new();
 
@@ -69,8 +67,6 @@ namespace Echo
         #endregion
 
         #region Properties
-        public static PathfindingNavigationGraph Instance => _instance;
-
         public Dictionary<Vector2, CellData> GraphCellList => _graphCellList;
         public Dictionary<Vector2, List<CellData>> GraphAjacentList => _graphAjacentList;
 
@@ -79,15 +75,6 @@ namespace Echo
 
         private void Awake()
         {
-            if (_instance != null)
-            {
-                Debug.LogError("Error : try to create an already existing singleton ! Gameobject has been destroyed !");
-                Destroy(gameObject);
-                return;
-            }
-
-            _instance = this;
-
             _data = gameObject.GetComponent<EchoData>();
 
             if (_data == null)

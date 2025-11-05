@@ -213,7 +213,7 @@ namespace Echo
             _echoController.GetInputDataByRef().thrust = thrustPercent;
             _echoController.GetInputDataByRef().targetOrientation = targetOrientation;
 
-            return TaskStatus.Running;
+            return TaskStatus.Success;
         }
 
         private Vector2 GetTargetPosition()
@@ -223,7 +223,7 @@ namespace Echo
             switch (_target)
             {
                 case MOVETO_TARGET.ENEMY:
-                    return _enemySpaceShip.Position;
+                    return ComputePredictionToSpaceship(_ourSpaceShip, _enemySpaceShip.Position, _enemySpaceShip.Velocity, _echoData.HitTimeTolerance);
 
                 case MOVETO_TARGET.NEAREST_WAYPOINT:
                     waypointView = _echoData.GetNearestWayPoint();
@@ -256,6 +256,28 @@ namespace Echo
             }
 
             return Vector2.zero;
+        }
+
+        public Vector2 ComputePredictionToSpaceship(SpaceShipView spaceship, Vector2 targetPosition, Vector2 targetVelocity, float hitTimeTolerance)
+        {
+            if (hitTimeTolerance <= 0)
+            {
+                Debug.LogError("Hit time tolerence must be greater than 0");
+                return targetPosition;
+            }
+
+            float shootAngle = Mathf.Deg2Rad * spaceship.Orientation;
+            Vector2 shootDirection = new Vector2(Mathf.Cos(shootAngle), Mathf.Sin(shootAngle));
+
+            Vector2 intersection;
+            bool canIntersect = AimingHelpers.ComputeIntersection(spaceship.Position, shootDirection, targetPosition, targetVelocity, out intersection);
+            if (!canIntersect)
+            { // Cannot shoot if directions never cross eachother (parallel)
+                return targetPosition;
+            }
+
+
+            return intersection;
         }
     }
 }

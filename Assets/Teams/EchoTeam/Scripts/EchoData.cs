@@ -9,11 +9,18 @@ namespace Echo
     public class EchoData : MonoBehaviour
     {
         // ----- FIELDS ----- //
+        [SerializeField] private float _hitTimeTolerance = 0.15f;
+
+        [SerializeField] private float _hitToleranceAngle = 10f;
+
         private int _ourSpaceshipID = 0;
         private int _enemySpaceshipID = 1;
 
         private GameManager _gameManager;
         // ----- FIELDS ----- //
+
+        public float HitTimeTolerance => _hitTimeTolerance;
+        public float HitToleranceAngle => _hitToleranceAngle;
 
         public void InitData()
         {

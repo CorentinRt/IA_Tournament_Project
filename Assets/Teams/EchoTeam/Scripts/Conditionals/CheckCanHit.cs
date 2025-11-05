@@ -18,11 +18,15 @@ namespace Echo
         [Tooltip("Target to check can hit")]
         public TARGET targetToCheck = TARGET.ENEMY;
 
+        /*
         [Tooltip("Hit time tolerance to hit enemy (in seconds)")]
         public SharedFloat hitTimeTolerance = .1f;
+        */
 
+        /*
         [Tooltip("Angle tolerance to hit mine (in degrees)")]
         public SharedFloat angleTolerance = 5f;
+        */
 
         private SpaceShipView _ourSpaceship;
         private SpaceShipView _enemySpaceship;
@@ -50,12 +54,12 @@ namespace Echo
             switch (targetToCheck)
             {
                 case TARGET.ENEMY:
-                    canHit = AimingHelpers.CanHit(_ourSpaceship, _enemySpaceship.Position, _enemySpaceship.Velocity, hitTimeTolerance.Value);
+                    canHit = AimingHelpers.CanHit(_ourSpaceship, _enemySpaceship.Position, _enemySpaceship.Velocity, _echoData.HitTimeTolerance);
                     break;
 
                 case TARGET.MINE:
                     MineView nearestMine = _echoData.GetNearestMine();
-                    canHit = AimingHelpers.CanHit(_ourSpaceship, nearestMine.Position, angleTolerance.Value);
+                    canHit = AimingHelpers.CanHit(_ourSpaceship, nearestMine.Position, _echoData.HitToleranceAngle);
                     break;
             }
 

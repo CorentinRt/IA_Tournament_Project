@@ -29,7 +29,7 @@ namespace Echo
 
         private void Start()
         {
-            _pathfindingNavigationGraph = PathfindingNavigationGraph.Instance;
+            _pathfindingNavigationGraph = GetComponent<PathfindingNavigationGraph>();
 
             if (_pathfindingNavigationGraph != null && !_pathfindingNavigationGraph.IsInit)
                 _pathfindingNavigationGraph.InitNavigationGraph();
