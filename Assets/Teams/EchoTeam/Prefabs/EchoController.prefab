@@ -66,6 +66,7 @@ MonoBehaviour:
   _maxPonderationLoopPredition: 30
   _intervalPrecision: 0.1
   _distanceToleranceToSuccess: 0.8
+  _velocityModifierFactor: 0.5
 --- !u!114 &-1628288698933354887
 MonoBehaviour:
   m_ObjectHideFlags: 0

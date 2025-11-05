@@ -240,14 +240,28 @@ namespace Echo
             if (!_isInit)
                 InitNavigationGraph();
 
+            float width = _screenHalfSize.x * 2f;
+            float height = _screenHalfSize.y * 2f;
+
+            startPosition.x = Mathf.Clamp(startPosition.x, _graphOrigin.x, _graphOrigin.x + width);
+            startPosition.y = Mathf.Clamp(startPosition.y, _graphOrigin.y, _graphOrigin.y + height);
+            targetPosition.x = Mathf.Clamp(targetPosition.x, _graphOrigin.x, _graphOrigin.x + width);
+            targetPosition.y = Mathf.Clamp(targetPosition.y, _graphOrigin.y, _graphOrigin.y + height);
+
+            Debug.DrawLine(startPosition, targetPosition, Color.magenta);
+
             startPosition = SnapToGrid(startPosition);
             targetPosition = SnapToGrid(targetPosition);
 
-            if (!_graphCellList.TryGetValue(startPosition, out CellData startCell))
-                return new List<CellData>();
-
-            if (!_graphCellList.TryGetValue(targetPosition, out CellData targetCell))
-                return new List<CellData>();
+            if (!_graphCellList.TryGetValue(startPosition, out CellData startCell) || !_graphCellList.TryGetValue(targetPosition, out CellData targetCell))
+            {
+                List<CellData> errorPath = new List<CellData>
+                {
+                    new CellData(startPosition),
+                    new CellData(targetPosition)
+                };
+                return errorPath;
+            }
 
             List<CellData> path = new List<CellData>();
 
