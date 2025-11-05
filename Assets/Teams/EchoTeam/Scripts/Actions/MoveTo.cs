@@ -28,8 +28,8 @@ namespace Echo
         private float _minThrustBraking = 0.5f;
 
         private Vector2 predictedPathPoint;
-        private float predictedPathMin = 1f;
-        private float predictedPathMax = 3f;
+        private float predictedPathMin = 2f;
+        private float predictedPathMax = 5f;
         private float predictedPathFactor = 0.5f;
 
         private float _deltaFromMaxSpeedConsidered = 0.3f;
@@ -224,7 +224,7 @@ namespace Echo
                     return ComputePredictionToSpaceship(_enemySpaceShip.Position, _enemySpaceShip.Velocity);
 
                 case MOVETO_TARGET.NEAREST_WAYPOINT:
-                    waypointView = _echoData.GetNearestWayPoint();
+                    waypointView = _echoData.GetNearestWayPoint(_ourSpaceShip.Position + _ourSpaceShip.Velocity * _echoData.VelocityModifierFactor);
 
                     if (waypointView != null)
                         return waypointView.Position;
@@ -232,7 +232,7 @@ namespace Echo
                     break;
 
                 case MOVETO_TARGET.NEAREST_WAYPOINT_NEUTRAL:
-                    waypointView = _echoData.GetNearestNeutralOrEnemyWayPoint();
+                    waypointView = _echoData.GetNearestNeutralOrEnemyWayPoint(_ourSpaceShip.Position + _ourSpaceShip.Velocity * _echoData.VelocityModifierFactor);
 
                     if (waypointView != null)
                         return waypointView.Position;
@@ -240,12 +240,12 @@ namespace Echo
                     break;
 
                 case MOVETO_TARGET.NEAREST_WAYPOINT_ENEMY:
-                    waypointView = _echoData.GetNearestEnemyWayPoint();
+                    waypointView = _echoData.GetNearestEnemyWayPoint(_ourSpaceShip.Position + _ourSpaceShip.Velocity * _echoData.VelocityModifierFactor);
 
                     if (waypointView != null)
                         return waypointView.Position;
 
-                    waypointView = _echoData.GetNearestNeutralOrEnemyWayPoint();
+                    waypointView = _echoData.GetNearestNeutralOrEnemyWayPoint(_ourSpaceShip.Position + _ourSpaceShip.Velocity * _echoData.VelocityModifierFactor);
 
                     if (waypointView != null)
                         return waypointView.Position;

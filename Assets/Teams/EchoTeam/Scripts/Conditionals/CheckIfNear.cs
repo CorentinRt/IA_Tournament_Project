@@ -58,7 +58,7 @@ namespace Echo
                     break;
 
                 case TARGET.WAYPOINT:
-                    WayPointView nearestWaypoint = _echoData.GetNearestEnemyWayPoint();
+                    WayPointView nearestWaypoint = _echoData.GetNearestEnemyWayPoint(_ourSpaceship.Position);
                     distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, nearestWaypoint.Position);
                     isNear = distance <= checkDistance.Value;
                     break;

@@ -113,7 +113,14 @@ namespace Echo
                 }
                 else
                 {
-                    Gizmos.color = _cellColor * cell.Cost * 1.5f;
+                    Gizmos.color = _cellColor * cell.Cost;
+
+                    if (cell.Cost == 3)
+                    {
+                        Color color = Gizmos.color;
+                        color.a = 1f;
+                        Gizmos.color = Color.blue;
+                    }
                 }
 
                 Gizmos.DrawCube(new Vector3(position.x, position.y), new Vector3(_cellSize, _cellSize));

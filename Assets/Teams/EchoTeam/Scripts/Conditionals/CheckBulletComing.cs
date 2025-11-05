@@ -10,7 +10,7 @@ namespace Echo
     public class CheckBulletComing : EchoConditional
     {
         public SharedFloat checkRadius;
-        public SharedFloat timingTolerance;
+        public SharedFloat alertRadius;
 
         public override void OnAwake()
         {
@@ -21,10 +21,14 @@ namespace Echo
                 _echoData.GetOurSpaceship().Position,
                 checkRadius.Value,
                 Color.yellow);
-            _echoDebug.AddCircle("BulletShipIntersection",
+            // _echoDebug.AddCircle("BulletShipIntersection",
+            //     _echoData.GetOurSpaceship().Position,
+            //     _echoData.GetOurSpaceship().Radius,
+            //     Color.green);
+            _echoDebug.AddCircle("AlertRadius",
                 _echoData.GetOurSpaceship().Position,
-                0.5f,
-                Color.green);
+                alertRadius.Value,
+                Color.red);
         }
 
         public override TaskStatus OnUpdate()
@@ -33,24 +37,43 @@ namespace Echo
             SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
 
             _echoDebug.UpdateDebugCirclePosition("BulletComingCheckRadius", ourSpaceship.Position);
-            _echoDebug.UpdateDebugCirclePosition("BulletShipIntersection", ourSpaceship.Position);
-            
+            _echoDebug.UpdateDebugCirclePosition("AlertRadius", ourSpaceship.Position);
             foreach (BulletView bullet in bullets)
             {
-                if(Vector2.Distance(bullet.Position, ourSpaceship.Position) > checkRadius.Value) continue;
-
-                //Compute intersection between bullet line and ship line, if no intersection we continue to next bullet
-                if(!ComputeIntersection(ourSpaceship, bullet, out Vector2 intersection)) continue;
-
-                _echoDebug.UpdateDebugCirclePosition("BulletShipIntersection", intersection);
+                Vector2 shipToBullet = bullet.Position -  ourSpaceship.Position;
                 
-                //Compute Time to intersection point for ship and bullet
-                if(ComputeCollision(intersection, ourSpaceship, bullet)) return TaskStatus.Success;
+                float dot = Vector2.Dot(bullet.Velocity, shipToBullet);
+                float distance = Vector2.Distance(ourSpaceship.Position, bullet.Position);
+                if (dot <= 0.0f && distance <= alertRadius.Value) return TaskStatus.Success;
             }
             
             return TaskStatus.Failure;
+
+            // List<BulletView> bullets = _echoData.GetBullets();
+            // SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
+            //
+            // _echoDebug.UpdateDebugCirclePosition("BulletComingCheckRadius", ourSpaceship.Position);
+            // _echoDebug.UpdateDebugCirclePosition("AlertRadius", ourSpaceship.Position);
+            // _echoDebug.UpdateDebugCirclePosition("BulletShipIntersection", ourSpaceship.Position);
+            //
+            // foreach (BulletView bullet in bullets)
+            // {
+            //     if(Vector2.Distance(bullet.Position, ourSpaceship.Position) > checkRadius.Value) continue;
+            //
+            //     //Compute intersection between bullet line and ship line, if no intersection we continue to next bullet
+            //     if(!ComputeIntersection(ourSpaceship, bullet, out Vector2 intersection)) continue;
+            //
+            //     _echoDebug.UpdateDebugCirclePosition("BulletShipIntersection", intersection);
+            //     
+            //     //Compute Time to intersection point for ship and bullet
+            //     // if(ComputeCollision(intersection, ourSpaceship, bullet)) return TaskStatus.Success;
+            //     if(Vector2.Distance(intersection, ourSpaceship.Position) - ourSpaceship.Radius < alertRadius.Value) return TaskStatus.Success;
+            // }
+            //
+            // return TaskStatus.Failure;
         }
 
+        // DEPRECATED
         private bool ComputeIntersection(SpaceShipView ourSpaceship, BulletView bullet, out Vector2 intersection)
         {
             intersection = Vector2.zero;
@@ -69,7 +92,7 @@ namespace Echo
                     // we can detect it. Right now the tolerance is hard coded at 0.5f, it should be radius of collider of spaceShip
                     float cross = bulletToShip.x * bulletDirection.y - bulletToShip.y * bulletDirection.x;
                     float distToLine = Mathf.Abs(cross) / bulletDirection.magnitude;
-                    if (distToLine > 0.5f) return false; // Ship not on bullet line
+                    if (distToLine > ourSpaceship.Radius) return false; // Ship not on bullet line
                     
                     // Then we do dot product to check if ship is in front of bullet
                     // and not behind
@@ -91,26 +114,30 @@ namespace Echo
 
             float t = (diff.x * bulletDirection.y - diff.y * bulletDirection.x) / det;
             float s = (diff.x * shipDirection.y - diff.y * shipDirection.x) / det;
-            
-            if(t < 0 || s < 0) return false; // This means intersection if behind either ship or bullet
+
+            // Means intersection is behind bullet
+            if (s < 0) return false;
 
             intersection = ourSpaceship.Position + t * shipDirection;
+            
             return true;
         }
-
+        // DEPRECATED
         private bool ComputeCollision(Vector2 intersection, SpaceShipView ourSpaceship, BulletView bullet)
         {
             if (ourSpaceship.Velocity.normalized.magnitude < Mathf.Epsilon)
                 return true;
             
             float shipDistanceToIntersection = Vector2.Distance(intersection, ourSpaceship.Position);
+            shipDistanceToIntersection = Mathf.Max(0f, shipDistanceToIntersection - ourSpaceship.Radius);
+
             float shipTimeToIntersection = ourSpaceship.Velocity.magnitude / shipDistanceToIntersection;
             
             float bulletDistanceToIntersection = Vector2.Distance(intersection, bullet.Position);
             float bulletTimeToIntersection = bullet.Velocity.magnitude / bulletDistanceToIntersection;
 
             //Check if time for bullet to arrive to point = time for ship to arrive at same point (with tolerance)
-            if (Mathf.Abs(shipTimeToIntersection - bulletTimeToIntersection) <= timingTolerance.Value)
+            if (Mathf.Abs(shipTimeToIntersection - bulletTimeToIntersection) < Mathf.Epsilon)
             {
                 return true;
             }
