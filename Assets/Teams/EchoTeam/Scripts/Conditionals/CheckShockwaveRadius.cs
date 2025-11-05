@@ -20,9 +20,6 @@ namespace Echo
         [BehaviorDesigner.Runtime.Tasks.Tooltip("Target to check is in radius")]
         public TARGET targetToCheck = TARGET.ENEMY;
 
-        [BehaviorDesigner.Runtime.Tasks.Tooltip("DebugRadiusColor")]
-        public Color Color;
-
         private float _shockwaveRadius;
 
         private SpaceShipView _ourSpaceShip;
