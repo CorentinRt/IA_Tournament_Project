@@ -16,6 +16,8 @@ public class EchoDebug : MonoBehaviour
 
     public void AddCircle(string name, Vector3 center, float radius, Color color)
     {
+        if (_circles.ContainsKey(name)) return;
+
         _circles.Add(name, (new CircleData
         {
             Center = center,

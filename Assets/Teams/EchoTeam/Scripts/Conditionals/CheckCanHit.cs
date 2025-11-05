@@ -35,7 +35,6 @@ namespace Echo
 
             _ourSpaceship = _echoData.GetOurSpaceship();
             _enemySpaceship = _echoData.GetEnemySpaceship();
-            _mines = _echoData.GetMines();
         }
 
         public override TaskStatus OnUpdate()
@@ -55,14 +54,8 @@ namespace Echo
                     break;
 
                 case TARGET.MINE:
-                    foreach (MineView mine in _mines)
-                    {
-                        canHit = AimingHelpers.CanHit(_ourSpaceship, mine.Position, angleTolerance.Value);
-                        if (canHit)
-                        {
-                            break;
-                        }
-                    }
+                    MineView nearestMine = _echoData.GetNearestMine();
+                    canHit = AimingHelpers.CanHit(_ourSpaceship, nearestMine.Position, angleTolerance.Value);
                     break;
             }
 

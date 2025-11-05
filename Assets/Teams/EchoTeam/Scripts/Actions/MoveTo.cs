@@ -24,6 +24,19 @@ namespace Echo
         private SpaceShipView _ourSpaceShip;
         private SpaceShipView _enemySpaceShip;
 
+        private float _minThrustBraking = 0.5f;
+
+        private Vector2 predictedPathPoint;
+        private float predictedPathMin = 1f;
+        private float predictedPathMax = 3f;
+        private float predictedPathFactor = 0.5f;
+
+        private float _deltaFromMaxSpeedConsidered = 0.3f;
+        private float _deltaAngleConsideredAligned = 5f;
+
+        private float _slowStartDistance = 0.5f;
+
+
         public override void OnAwake()
         {
             base.OnAwake();
@@ -56,7 +69,6 @@ namespace Echo
                 return TaskStatus.Failure;
 
             Vector2 targetPosition = GetTargetPosition();
-
             List<CellData> path = _navigationGraph.FindPathTo(_ourSpaceShip.Position, targetPosition);
 
             if (path == null)
@@ -65,33 +77,126 @@ namespace Echo
             if (path.Count <= 1)
                 return TaskStatus.Success;
 
-            // Compute dir to next cellData
-            Vector2 dir = path[1].Position - _ourSpaceShip.Position;
-            Vector2 normalizedDir = dir.normalized;
+            // Find predicted point path to target
+            float currentSpeed = _ourSpaceShip.Velocity.magnitude;
+            float predictionDistance = Mathf.Clamp(predictedPathMin + currentSpeed * predictedPathFactor, predictedPathMin, predictedPathMax);
+
+            Vector2 predictedPoint = path[1].Position;
+            float currentPredictionDistance = 0f;
+            Vector2 previousPredicted = _ourSpaceShip.Position;
+            for (int i = 1; i < path.Count; ++i)
+            {
+                Vector2 tempPredicted = path[i].Position;
+                currentPredictionDistance += Vector2.Distance(previousPredicted, tempPredicted);
+                previousPredicted = tempPredicted;
+                predictedPoint = tempPredicted;
+
+                if (currentPredictionDistance >= predictionDistance)
+                    break;
+            }
+
+            // Compute dir to Predicted pos
+            Vector2 toPredicted = predictedPoint - _ourSpaceShip.Position;
+            Vector2 dir = toPredicted.normalized;
 
             float targetOrientation = AimingHelpers.ComputeSteeringOrient(_ourSpaceShip, _ourSpaceShip.Position + dir, 1.2f);
 
-            Vector2 velocity = _ourSpaceShip.Velocity;
+            float alignementVelocity = 0f;
+            if (_ourSpaceShip.Velocity.sqrMagnitude > 0.001f)
+                alignementVelocity = Vector2.Dot(dir, _ourSpaceShip.Velocity.normalized);
 
-            Vector2 velocityDiffAngleVector = normalizedDir - velocity.normalized;
-            velocityDiffAngleVector.Normalize();
+            Vector2 shipUp = Vector2.up;
+            float alignementShip = 0f;
+            if (dir.sqrMagnitude > 0.0001f)
+            {
+                float tempX = shipUp.x;
+                float tempY = shipUp.y;
+                shipUp.x = tempX * Mathf.Cos((_ourSpaceShip.Orientation - 90f) * Mathf.Deg2Rad) - tempY * Mathf.Sin((_ourSpaceShip.Orientation - 90f) * Mathf.Deg2Rad);
+                shipUp.y = tempX * Mathf.Sin((_ourSpaceShip.Orientation - 90f) * Mathf.Deg2Rad) + tempY * Mathf.Cos((_ourSpaceShip.Orientation - 90f) * Mathf.Deg2Rad);
+                alignementShip = Vector2.Dot(dir, shipUp);
+            }
 
-            float velocityDiffAngle = Mathf.Abs(Mathf.Atan2(velocityDiffAngleVector.y, velocityDiffAngleVector.x) * Mathf.Rad2Deg);
+            float distanceToPredicted = toPredicted.magnitude;
 
-            //Debug.DrawRay(_ourSpaceShip.Position, normalizedDir * 2f, Color.red);
-            //Debug.DrawRay(_ourSpaceShip.Position, velocity.normalized * 2f, Color.green);
+            float distanceToTarget = Vector2.Distance(targetPosition, _ourSpaceShip.Position);
 
             float thrustPercent = 0f;
 
-            float dotProduct = velocity.x * dir.y + velocity.y * dir.x;
+            bool hasEnoughSpeedForToward = currentSpeed >= _ourSpaceShip.SpeedMax - _deltaFromMaxSpeedConsidered;
 
-            // Determine if need to use thrust
-            bool canThrust = velocityDiffAngle > 10f || velocity.magnitude < _ourSpaceShip.SpeedMax - 0.5f || dotProduct < 0;
+            // case not moving at all -> accelerate
+            if (currentSpeed < 0.2f)
+            {
+                thrustPercent = 1f;
+                _echoController.GetInputDataByRef().thrust = thrustPercent;
+                _echoController.GetInputDataByRef().targetOrientation = targetOrientation;
+                return TaskStatus.Running;
+            }
+            // Case Velocity aligned to target
+            else if (alignementVelocity > Mathf.Cos(_deltaAngleConsideredAligned * Mathf.Deg2Rad))
+            {
+                // Has enough Speed to continue
+                if (hasEnoughSpeedForToward)
+                {
+                    thrustPercent = _minThrustBraking / 2f;
 
-            if (canThrust)
-                thrustPercent = Mathf.Lerp(1f, 0.5f, velocityDiffAngle / 140f);
-            
-            // Apply to data
+                    // Case really well Aligned -> don't need thrust
+                    if (alignementVelocity > Mathf.Cos(_deltaAngleConsideredAligned / 2f * Mathf.Deg2Rad))
+                    {
+                        thrustPercent = 0f;
+                    }
+                }
+                else
+                {
+                    // Case ship aligned with target -> accelerate to match max speed
+                    if (alignementShip > Mathf.Cos(_deltaAngleConsideredAligned * Mathf.Deg2Rad))
+                    {
+                        thrustPercent = 1f;
+                    }
+                    else
+                    {
+                        thrustPercent = _minThrustBraking / 2f;
+                    }
+                }
+            }
+            // Case velocity not aligned to target
+            else
+            {
+                // Case ship aligned -> accelerate to max
+                if (alignementShip > Mathf.Cos(_deltaAngleConsideredAligned * Mathf.Deg2Rad))
+                {
+                    thrustPercent = 1f;
+                }
+                // Case ships not aligned
+                else
+                {
+                    // opposite direction
+                    if (alignementShip < 0)
+                    {
+                        thrustPercent = _minThrustBraking / 2f;
+                    }
+                    // nearly same direction
+                    else
+                    {
+                        alignementShip = Mathf.Clamp01(alignementShip);
+
+                        thrustPercent = Mathf.Lerp(_minThrustBraking, 1f, alignementShip);
+                    }
+                }
+            }
+
+            // case near final target -> start to reduce speed
+            if (distanceToTarget < _slowStartDistance)
+            {
+                float percentClose = Mathf.InverseLerp(0f, 0.7f, distanceToTarget / _slowStartDistance);
+
+                thrustPercent -= percentClose;
+                thrustPercent = Mathf.Clamp01(thrustPercent);
+            }
+
+            Debug.DrawRay(_ourSpaceShip.Position, shipUp * thrustPercent * 2f, Color.red);
+
+            // Apply to Input data
             _echoController.GetInputDataByRef().thrust = thrustPercent;
             _echoController.GetInputDataByRef().targetOrientation = targetOrientation;
 

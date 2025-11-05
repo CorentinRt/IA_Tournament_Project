@@ -96,6 +96,7 @@ namespace Echo
                 float distance = UnityEngine.Vector3.Distance(ourSpaceship.Position, waypoint.Position);
                 if (distance <= nearestDistance)
                 {
+                    nearestDistance = distance;
                     nearestWaypoint = waypoint;
                 }
             }
@@ -122,6 +123,7 @@ namespace Echo
                 float distance = UnityEngine.Vector3.Distance(ourSpaceship.Position, waypoint.Position);
                 if (distance <= nearestDistance)
                 {
+                    nearestDistance = distance;
                     nearestWaypoint = waypoint;
                 }
             }
@@ -148,6 +150,7 @@ namespace Echo
                 float distance = UnityEngine.Vector3.Distance(ourSpaceship.Position, waypoint.Position);
                 if (distance <= nearestDistance)
                 {
+                    nearestDistance = distance;
                     nearestWaypoint = waypoint;
                 }
             }
