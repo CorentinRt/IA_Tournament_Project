@@ -273,6 +273,13 @@ namespace Echo
                 return targetPosition;
             }
 
+            Vector2 dir = targetVelocity.normalized;
+
+            // Switch to solution of Fabien
+            // Check can hit for a lot of point starting from target Pos and in direction of velocity
+
+
+
             Vector2 predictedDir = targetPosition + targetVelocity * hitTimeTolerance;
 
             return predictedDir;
