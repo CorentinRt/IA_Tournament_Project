@@ -102,7 +102,7 @@ namespace Echo
             Vector2 toPredicted = predictedPoint - _ourSpaceShip.Position;
             Vector2 dir = toPredicted.normalized;
 
-            if (toPredicted.magnitude < distanceToleranceToSuccess.Value)
+            if (Vector2.Distance(_ourSpaceShip.Position, targetPosition) < distanceToleranceToSuccess.Value)
             {
                 return TaskStatus.Success;
             }

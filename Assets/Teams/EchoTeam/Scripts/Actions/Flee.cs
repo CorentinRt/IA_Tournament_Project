@@ -29,7 +29,15 @@ namespace Echo
             if (_ourSpaceShip == null)
                 return TaskStatus.Failure;
 
-            //BulletView dangerBullet = 
+            BulletView dangerBullet = _echoData.GetNearestBulletDanger();
+
+            if (dangerBullet == null)
+                return TaskStatus.Failure;
+
+            Vector2 bulletVelocity = dangerBullet.Velocity;
+
+            Vector2 bulletToShip = _ourSpaceShip.Position - dangerBullet.Position;
+
 
         }
     }
