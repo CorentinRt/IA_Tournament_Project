@@ -44,7 +44,7 @@ namespace Echo
                 
                 float dot = Vector2.Dot(bullet.Velocity, shipToBullet);
                 float distance = Vector2.Distance(ourSpaceship.Position, bullet.Position);
-                if (dot <= 0.0f && distance <= alertRadius.Value) return TaskStatus.Success;
+                if (dot <= 0.0f && (distance - ourSpaceship.Radius) <= alertRadius.Value) return TaskStatus.Success;
             }
             
             return TaskStatus.Failure;
