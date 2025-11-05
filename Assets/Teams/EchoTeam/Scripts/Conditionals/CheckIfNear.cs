@@ -13,6 +13,7 @@ namespace Echo
             ENEMY = 0,
             WAYPOINT = 1,
             MINE = 2,
+            BULLET = 3
         }
 
         // ----- FIELDS ----- //
@@ -65,6 +66,12 @@ namespace Echo
                 case TARGET.MINE:
                     MineView nearestMine = _echoData.GetNearestMine();
                     distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, nearestMine.Position);
+                    isNear = distance <= checkDistance.Value;
+                    break;
+
+                case TARGET.BULLET:
+                    BulletView nearestBullet = _echoData.GetNearestBullet();
+                    distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, nearestBullet.Position);
                     isNear = distance <= checkDistance.Value;
                     break;
             }
