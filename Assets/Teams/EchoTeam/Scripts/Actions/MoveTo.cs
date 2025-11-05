@@ -20,10 +20,6 @@ namespace Echo
 
         [SerializeField] private MOVETO_TARGET _target;
 
-        [SerializeField] private SharedFloat _distanceMaxPredition = 3f;
-
-        public SharedFloat distanceToleranceToSuccess;
-
         private PathfindingNavigationGraph _navigationGraph;
 
         private SpaceShipView _ourSpaceShip;
@@ -61,7 +57,7 @@ namespace Echo
             if (_navigationGraph == null)
                 Debug.LogError("Error : no navigation graph found");
 
-            _echoDebug.AddCircle("MoveToSuccessCheck", _ourSpaceShip.Position, distanceToleranceToSuccess.Value, Color.green);
+            _echoDebug.AddCircle("MoveToSuccessCheck", _ourSpaceShip.Position, _echoData.DistanceToleranceToSuccess, Color.green);
         }
 
         public override void OnStart()
@@ -108,7 +104,7 @@ namespace Echo
             Vector2 toPredicted = predictedPoint - _ourSpaceShip.Position;
             Vector2 dir = toPredicted.normalized;
 
-            if (Vector2.Distance(_ourSpaceShip.Position, targetPosition) < distanceToleranceToSuccess.Value)
+            if (Vector2.Distance(_ourSpaceShip.Position, targetPosition) < _echoData.DistanceToleranceToSuccess)
             {
                 
                 return TaskStatus.Success;
@@ -225,12 +221,7 @@ namespace Echo
             switch (_target)
             {
                 case MOVETO_TARGET.ENEMY:
-                    if (Vector2.Distance(_ourSpaceShip.Position, _enemySpaceShip.Position) > _distanceMaxPredition.Value)
-                    {
-                        return _ourSpaceShip.Position;
-                    }
-
-                    return ComputePredictionToSpaceship(_enemySpaceShip.Position, _enemySpaceShip.Velocity, _echoData.HitTimeTolerance);
+                    return ComputePredictionToSpaceship(_enemySpaceShip.Position, _enemySpaceShip.Velocity);
 
                 case MOVETO_TARGET.NEAREST_WAYPOINT:
                     waypointView = _echoData.GetNearestWayPoint();
@@ -265,24 +256,24 @@ namespace Echo
             return Vector2.zero;
         }
 
-        public Vector2 ComputePredictionToSpaceship(Vector2 targetPosition, Vector2 targetVelocity, float hitTimeTolerance)
+        public Vector2 ComputePredictionToSpaceship(Vector2 targetPosition, Vector2 targetVelocity)
         {
-            if (hitTimeTolerance <= 0)
-            {
-                Debug.LogError("Hit time tolerence must be greater than 0");
-                return targetPosition;
-            }
-
             Vector2 dir = targetVelocity.normalized;
 
-            // Switch to solution of Fabien
-            // Check can hit for a lot of point starting from target Pos and in direction of velocity
+            Vector2 resultPosition = targetPosition;
 
+            for (int i = 0; i < _echoData.MaxPonderationLoopPredition; ++i)
+            {
+                Vector2 tempPosition = targetPosition + dir * i * _echoData.IntervalPrecision;
 
+                if (!AimingHelpers.CanHit(_ourSpaceShip, tempPosition, targetVelocity, _echoData.HitTimeTolerance))
+                    continue;
 
-            Vector2 predictedDir = targetPosition + targetVelocity * hitTimeTolerance;
+                resultPosition = tempPosition;
+                break;
+            }
 
-            return predictedDir;
+            return resultPosition;
         }
     }
 }

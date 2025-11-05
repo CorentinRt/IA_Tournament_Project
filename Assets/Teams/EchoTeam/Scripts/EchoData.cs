@@ -1,3 +1,4 @@
+using BehaviorDesigner.Runtime;
 using DoNotModify;
 using IIM;
 using NUnit.Framework.Constraints;
@@ -9,9 +10,15 @@ namespace Echo
     public class EchoData : MonoBehaviour
     {
         // ----- FIELDS ----- //
+        [Header("Hit")]
         [SerializeField] private float _hitTimeTolerance = 0.15f;
-
         [SerializeField] private float _hitToleranceAngle = 10f;
+
+        [Header("MoveTo")]
+        [SerializeField] private int _maxPonderationLoopPredition = 20;
+        [SerializeField] private float _intervalPrecision = 0.1f;
+        [SerializeField] private float _distanceToleranceToSuccess = 0.8f;
+
 
         private int _ourSpaceshipID = 0;
         private int _enemySpaceshipID = 1;
@@ -21,6 +28,10 @@ namespace Echo
 
         public float HitTimeTolerance => _hitTimeTolerance;
         public float HitToleranceAngle => _hitToleranceAngle;
+
+        public int MaxPonderationLoopPredition => _maxPonderationLoopPredition;
+        public float IntervalPrecision => _intervalPrecision;
+        public float DistanceToleranceToSuccess => _distanceToleranceToSuccess;
 
         public void InitData()
         {

@@ -61,6 +61,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79f4d0c93b807734592d96760a86b01f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hitTimeTolerance: 0.2
+  _hitToleranceAngle: 15
+  _maxPonderationLoopPredition: 30
+  _intervalPrecision: 0.1
+  _distanceToleranceToSuccess: 0.8
 --- !u!114 &-1628288698933354887
 MonoBehaviour:
   m_ObjectHideFlags: 0
