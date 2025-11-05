@@ -18,6 +18,7 @@ namespace Echo
         [SerializeField] private int _maxPonderationLoopPredition = 20;
         [SerializeField] private float _intervalPrecision = 0.1f;
         [SerializeField] private float _distanceToleranceToSuccess = 0.8f;
+        [SerializeField] private float _velocityModifierFactor = 0.5f;
 
 
         private int _ourSpaceshipID = 0;
@@ -32,6 +33,7 @@ namespace Echo
         public int MaxPonderationLoopPredition => _maxPonderationLoopPredition;
         public float IntervalPrecision => _intervalPrecision;
         public float DistanceToleranceToSuccess => _distanceToleranceToSuccess;
+        public float VelocityModifierFactor => _velocityModifierFactor;
 
         public void InitData()
         {
@@ -99,20 +101,19 @@ namespace Echo
             return closestMine;
         }
 
-        public WayPointView GetNearestWayPoint()
+        public WayPointView GetNearestWayPoint(Vector2 position)
         {
-            SpaceShipView ourSpaceship = GetOurSpaceship();
             List<WayPointView> waypoints = GetWayPoints();
 
             if (waypoints.Count == 0)
                 return null;
 
-            WayPointView nearestWaypoint = waypoints[0];
-            float nearestDistance = Vector2.Distance(waypoints[0].Position, ourSpaceship.Position);
+            WayPointView nearestWaypoint = null;
+            float nearestDistance = Mathf.Infinity;
 
             foreach (WayPointView waypoint in waypoints)
             {
-                float distance = UnityEngine.Vector3.Distance(ourSpaceship.Position, waypoint.Position);
+                float distance = UnityEngine.Vector3.Distance(position, waypoint.Position);
                 if (distance <= nearestDistance)
                 {
                     nearestDistance = distance;
@@ -123,7 +124,7 @@ namespace Echo
             return nearestWaypoint;
         }
 
-        public WayPointView GetNearestEnemyWayPoint()
+        public WayPointView GetNearestEnemyWayPoint(Vector2 position)
         {
             SpaceShipView ourSpaceship = GetOurSpaceship();
             List<WayPointView> waypoints = GetWayPoints();
@@ -139,7 +140,7 @@ namespace Echo
                 if (waypoint.Owner == ourSpaceship.Owner ||waypoint.Owner == -1)
                     continue;
 
-                float distance = UnityEngine.Vector3.Distance(ourSpaceship.Position, waypoint.Position);
+                float distance = UnityEngine.Vector3.Distance(position, waypoint.Position);
                 if (distance <= nearestDistance)
                 {
                     nearestDistance = distance;
@@ -150,7 +151,7 @@ namespace Echo
             return nearestWaypoint;
         }
 
-        public WayPointView GetNearestNeutralOrEnemyWayPoint()
+        public WayPointView GetNearestNeutralOrEnemyWayPoint(Vector2 position)
         {
             SpaceShipView ourSpaceship = GetOurSpaceship();
             List<WayPointView> waypoints = GetWayPoints();
@@ -166,7 +167,7 @@ namespace Echo
                 if (waypoint.Owner == ourSpaceship.Owner)
                     continue;
 
-                float distance = UnityEngine.Vector3.Distance(ourSpaceship.Position, waypoint.Position);
+                float distance = UnityEngine.Vector3.Distance(position, waypoint.Position);
                 if (distance <= nearestDistance)
                 {
                     nearestDistance = distance;

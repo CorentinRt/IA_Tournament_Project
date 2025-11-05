@@ -59,6 +59,7 @@ namespace Echo
 
         [Header("Asteroids")]
         [SerializeField] private float _asteroidCollisionRadiusCheck = 0.3f;
+        //[SerializeField] private float _asteroidNearRadiusCheck = 0.7f;
 
         [Header("Waypoints")]
         [SerializeField] private float _waypointRadiusCheck = 0.3f;
@@ -162,11 +163,21 @@ namespace Echo
 
                     foreach (DoNotModify.AsteroidView asteroid in asteroids)
                     {
-                        if (Vector2.Distance(asteroid.Position, currentPosition) < _asteroidCollisionRadiusCheck + asteroid.Radius)
+                        float distance = Vector2.Distance(asteroid.Position, currentPosition);
+
+                        if (distance < _asteroidCollisionRadiusCheck + asteroid.Radius)
                         {
                             walkable = false;
                             break;
                         }
+
+                        /*
+                        else if (distance < _asteroidNearRadiusCheck + asteroid.Radius)
+                        {
+                            cost = 3;
+                            break;
+                        }
+                        */
                     }
 
                     foreach (DoNotModify.WayPointView wayPoint in wayPoints)
