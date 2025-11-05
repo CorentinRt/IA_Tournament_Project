@@ -176,6 +176,30 @@ namespace Echo
             return 2.2f;
         }
 
+        public BulletView GetNearestBullet()
+        {
+            SpaceShipView ourSpaceship = GetOurSpaceship();
+            List<BulletView> bullets = GetBullets();
+
+            if (bullets.Count == 0)
+                return null;
+
+            BulletView nearestBullet = null;
+            float nearestDistance = Mathf.Infinity;
+
+            foreach (BulletView bullet in bullets)
+            {
+                float distance = UnityEngine.Vector3.Distance(ourSpaceship.Position, bullet.Position);
+                if (distance <= nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestBullet = bullet;
+                }
+            }
+
+            return nearestBullet;
+        }
+
         public BulletView GetNearestBulletDanger(float radius = 0.3f, float tolerance = 0.3f)
         {
             SpaceShipView ourSpaceship = GetOurSpaceship();
