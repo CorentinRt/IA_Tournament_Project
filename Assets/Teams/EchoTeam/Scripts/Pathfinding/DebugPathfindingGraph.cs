@@ -99,7 +99,7 @@ namespace Echo
 
         private void DrawCellGizmos()
         {
-            foreach (KeyValuePair<Vector2, CellData> pair in _pathfindingNavigationGraph.GraphCellList)
+            foreach (KeyValuePair<Vector2, CellData> pair in _pathfindingNavigationGraph.GraphCellDict)
             {
                 Vector2 position = pair.Key;
                 CellData cell = pair.Value;
@@ -115,7 +115,7 @@ namespace Echo
                 {
                     Gizmos.color = _cellColor * cell.Cost;
 
-                    if (cell.Cost == 3)
+                    if (cell.Cost >= 3)
                     {
                         Color color = Gizmos.color;
                         color.a = 1f;
@@ -128,7 +128,7 @@ namespace Echo
 
             Gizmos.color = _neighborColor;
 
-            foreach (KeyValuePair<Vector2, List<CellData>> pair in _pathfindingNavigationGraph.GraphAjacentList)
+            foreach (KeyValuePair<Vector2, List<CellData>> pair in _pathfindingNavigationGraph.GraphAjacentDict)
             {
                 foreach (CellData neighbor in pair.Value)
                 {

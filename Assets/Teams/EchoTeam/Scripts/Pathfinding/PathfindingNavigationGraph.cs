@@ -1,3 +1,4 @@
+using DoNotModify;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -47,8 +48,8 @@ namespace Echo
     public class PathfindingNavigationGraph : MonoBehaviour
     {
         #region Fields
-        private Dictionary<Vector2, CellData> _graphCellList = new();
-        private Dictionary<Vector2, List<CellData>> _graphAjacentList = new();
+        private Dictionary<Vector2, CellData> _graphCellDict = new();
+        private Dictionary<Vector2, List<CellData>> _graphAjacentDict = new();
 
         private bool _isInit = false;
 
@@ -59,17 +60,24 @@ namespace Echo
 
         [Header("Asteroids")]
         [SerializeField] private float _asteroidCollisionRadiusCheck = 0.3f;
-        //[SerializeField] private float _asteroidNearRadiusCheck = 0.7f;
 
         [Header("Waypoints")]
         [SerializeField] private float _waypointRadiusCheck = 0.3f;
+        [SerializeField] private int _waypointNearCost = 1;
+
+        [Header("Mines")]
+        [SerializeField] private float _minesCheckRadius = 0.1f;
+        [SerializeField] private int _mineNearCost = 6;
+
+        private List<AsteroidView> _asteroids = new();
+        private List<WayPointView> _waypoints = new();
 
         private EchoData _data;
         #endregion
 
         #region Properties
-        public Dictionary<Vector2, CellData> GraphCellList => _graphCellList;
-        public Dictionary<Vector2, List<CellData>> GraphAjacentList => _graphAjacentList;
+        public Dictionary<Vector2, CellData> GraphCellDict => _graphCellDict;
+        public Dictionary<Vector2, List<CellData>> GraphAjacentDict => _graphAjacentDict;
 
         public bool IsInit => _isInit;
         #endregion
@@ -96,20 +104,20 @@ namespace Echo
             if (_isInit)
                 return;
 
-            if (_graphCellList == null)
-                _graphCellList = new Dictionary<Vector2, CellData>();
+            if (_graphCellDict == null)
+                _graphCellDict = new Dictionary<Vector2, CellData>();
 
-            if (_graphAjacentList == null)
-                _graphAjacentList = new Dictionary<Vector2, List<CellData>>();
+            if (_graphAjacentDict == null)
+                _graphAjacentDict = new Dictionary<Vector2, List<CellData>>();
 
-            if (_graphCellList != null)
-                _graphCellList.Clear();
+            if (_graphCellDict != null)
+                _graphCellDict.Clear();
 
-            if (_graphAjacentList != null)
-                _graphAjacentList.Clear();
+            if (_graphAjacentDict != null)
+                _graphAjacentDict.Clear();
 
-            List<DoNotModify.AsteroidView> asteroids = _data.GetAsteroids();
-            List<DoNotModify.WayPointView> wayPoints = _data.GetWayPoints();
+            _asteroids = _data.GetAsteroids();
+            _waypoints = _data.GetWayPoints();
 
             _screenHalfSize = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
 
@@ -125,7 +133,7 @@ namespace Echo
                 {
                     Vector2 currentPosition = SnapToGrid(_graphOrigin + new Vector2(x, y));
 
-                    _graphCellList[currentPosition] = new CellData(currentPosition);
+                    _graphCellDict[currentPosition] = new CellData(currentPosition);
                 }
             }
 
@@ -149,19 +157,19 @@ namespace Echo
                     {
                         Vector2 neighborPos = SnapToGrid(currentPosition + dir);
 
-                        if (_graphCellList.TryGetValue(neighborPos, out CellData neighborCellData))
+                        if (_graphCellDict.TryGetValue(neighborPos, out CellData neighborCellData))
                         {
                             neighborsData.Add(neighborCellData);
                         }
                     }
 
-                    _graphAjacentList[currentPosition] = neighborsData;
+                    _graphAjacentDict[currentPosition] = neighborsData;
 
                     bool walkable = true;
 
                     int cost = 2;
 
-                    foreach (DoNotModify.AsteroidView asteroid in asteroids)
+                    foreach (DoNotModify.AsteroidView asteroid in _asteroids)
                     {
                         float distance = Vector2.Distance(asteroid.Position, currentPosition);
 
@@ -170,28 +178,20 @@ namespace Echo
                             walkable = false;
                             break;
                         }
-
-                        /*
-                        else if (distance < _asteroidNearRadiusCheck + asteroid.Radius)
-                        {
-                            cost = 3;
-                            break;
-                        }
-                        */
                     }
 
-                    foreach (DoNotModify.WayPointView wayPoint in wayPoints)
+                    foreach (DoNotModify.WayPointView wayPoint in _waypoints)
                     {
                         if (Vector2.Distance(wayPoint.Position, currentPosition) < _waypointRadiusCheck + wayPoint.Radius)
                         {
-                            cost = 1;
+                            cost = _waypointNearCost;
                             break;
                         }
                     }
 
-                    _graphCellList[currentPosition].Position = currentPosition;
-                    _graphCellList[currentPosition].Walkable = walkable;
-                    _graphCellList[currentPosition].Cost = cost;
+                    _graphCellDict[currentPosition].Position = currentPosition;
+                    _graphCellDict[currentPosition].Walkable = walkable;
+                    _graphCellDict[currentPosition].Cost = cost;
                 }
             }
 
@@ -211,15 +211,15 @@ namespace Echo
         #region Get path / neighbors
         public bool IsWalkable(Vector2 position)
         {
-            if (!_graphCellList.ContainsKey(SnapToGrid(position)))
+            if (!_graphCellDict.ContainsKey(SnapToGrid(position)))
                 return false;
 
-            return _graphCellList[position].Walkable;
+            return _graphCellDict[position].Walkable;
         }
 
         public List<CellData> GetNeighbors(Vector2 cellPosition)
         {
-            if (_graphAjacentList == null || !_graphAjacentList.TryGetValue(SnapToGrid(cellPosition), out List<CellData> neighbors))
+            if (_graphAjacentDict == null || !_graphAjacentDict.TryGetValue(SnapToGrid(cellPosition), out List<CellData> neighbors))
                 return new List<CellData>();
 
             return neighbors;
@@ -229,7 +229,7 @@ namespace Echo
         {
             cellPosition = SnapToGrid(cellPosition);
 
-            if (!_graphCellList.TryGetValue(cellPosition, out CellData startCell))
+            if (!_graphCellDict.TryGetValue(cellPosition, out CellData startCell))
                 return null;
 
             return startCell;
@@ -253,7 +253,7 @@ namespace Echo
             startPosition = SnapToGrid(startPosition);
             targetPosition = SnapToGrid(targetPosition);
 
-            if (!_graphCellList.TryGetValue(startPosition, out CellData startCell) || !_graphCellList.TryGetValue(targetPosition, out CellData targetCell))
+            if (!_graphCellDict.TryGetValue(startPosition, out CellData startCell) || !_graphCellDict.TryGetValue(targetPosition, out CellData targetCell))
             {
                 List<CellData> errorPath = new List<CellData>
                 {
@@ -309,18 +309,30 @@ namespace Echo
                     break;
                 }
 
-                if (!_graphAjacentList.ContainsKey(currentCell.Position))
+                if (!_graphAjacentDict.ContainsKey(currentCell.Position))
                 {
                     Debug.LogError($"Error : stop path finding algo because cannot find Current Cell position in adjancent List ! Please, inform and see with a programmer !");
                     break;
                 }
 
-                foreach (CellData neighbor in _graphAjacentList[currentCell.Position])
+                foreach (CellData neighbor in _graphAjacentDict[currentCell.Position])
                 {
                     if (!neighbor.Walkable || visited.Contains(neighbor))
                         continue;
 
                     //Debug.Log($"Explore adjacent {neighbor.Name}");
+
+                    neighbor.Cost = 2;
+
+                    if (CheckMineNear(neighbor.Position))
+                    {
+                        neighbor.Cost = _mineNearCost;
+                    }
+                    else if (CheckWaypointNear(neighbor.Position))
+                    {
+                        neighbor.Cost = _waypointNearCost;
+                    }
+
                     float newDistance = cellDistance[currentCell] + neighbor.Cost;
                     
                     float heuristic = Heuristic(neighbor, targetCell);
@@ -388,5 +400,37 @@ namespace Echo
         }
 
         #endregion
+
+        private bool CheckWaypointNear(Vector2 position)
+        {
+            foreach (var waypoint in _waypoints)
+            {
+                float sqrDist = (position - waypoint.Position).sqrMagnitude;
+                float maxDist = _waypointRadiusCheck + waypoint.Radius;
+
+                if (sqrDist <= maxDist)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool CheckMineNear(Vector2 position)
+        {
+            foreach (var mine in _data.GetMines())
+            {
+                float sqrDist = (position - mine.Position).sqrMagnitude;
+                float maxDist = _minesCheckRadius + mine.ExplosionRadius;
+
+                if (sqrDist <= maxDist)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
