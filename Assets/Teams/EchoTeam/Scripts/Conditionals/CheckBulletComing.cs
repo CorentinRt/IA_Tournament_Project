@@ -50,6 +50,7 @@ namespace Echo
             
             foreach (MineView mine in mines)
             {
+                if(!mine.IsActive) continue;
                 float distance = Vector2.Distance(ourSpaceship.Position, mine.Position);
                 if (distance - ourSpaceship.Radius <= alertRadius.Value) return TaskStatus.Success;
             }
