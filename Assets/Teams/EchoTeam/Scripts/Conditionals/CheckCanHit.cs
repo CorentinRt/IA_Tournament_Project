@@ -59,6 +59,7 @@ namespace Echo
 
                 case TARGET.MINE:
                     MineView nearestMine = _echoData.GetNearestMine();
+                    if (nearestMine == null) return TaskStatus.Failure;
                     canHit = AimingHelpers.CanHit(_ourSpaceship, nearestMine.Position, _echoData.HitToleranceAngle);
                     break;
             }

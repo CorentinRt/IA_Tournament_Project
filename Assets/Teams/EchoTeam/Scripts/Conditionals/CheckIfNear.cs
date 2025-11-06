@@ -61,18 +61,21 @@ namespace Echo
 
                 case TARGET.WAYPOINT:
                     WayPointView nearestWaypoint = _echoData.GetNearestEnemyWayPoint(_ourSpaceship.Position);
+                    if (nearestWaypoint == null) return TaskStatus.Failure;
                     distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, nearestWaypoint.Position);
                     isNear = distance <= checkDistance.Value;
                     break;
 
                 case TARGET.MINE:
                     MineView nearestMine = _echoData.GetNearestMine();
+                    if (nearestMine == null) return TaskStatus.Failure;
                     distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, nearestMine.Position);
                     isNear = distance <= checkDistance.Value;
                     break;
 
                 case TARGET.BULLET:
                     BulletView nearestBullet = _echoData.GetNearestBullet();
+                    if (nearestBullet == null) return TaskStatus.Failure;
                     distance = UnityEngine.Vector3.Distance(_ourSpaceship.Position, nearestBullet.Position);
                     isNear = distance <= checkDistance.Value;
                     break;
