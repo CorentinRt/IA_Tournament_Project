@@ -62,7 +62,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hitTimeTolerance: 0.2
-  _hitToleranceAngle: 15
+  _hitToleranceAngle: 5
   _maxPonderationLoopPredition: 30
   _intervalPrecision: 0.1
   _distanceToleranceToSuccess: 0.8
@@ -135,6 +135,9 @@ MonoBehaviour:
   _cellSize: 0.5
   _asteroidCollisionRadiusCheck: 0.3
   _waypointRadiusCheck: 0.3
+  _waypointNearCost: 1
+  _minesCheckRadius: 0.1
+  _mineNearCost: 6
 --- !u!114 &3350509595596807163
 MonoBehaviour:
   m_ObjectHideFlags: 0
