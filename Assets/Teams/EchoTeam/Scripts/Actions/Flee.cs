@@ -47,7 +47,7 @@ namespace Echo
 
             float targetOrientation = _ourSpaceShip.Orientation;
 
-            if (determinant < 0)
+            if (determinant > 0)
             {
                 targetOrientation += 90f;
             }
