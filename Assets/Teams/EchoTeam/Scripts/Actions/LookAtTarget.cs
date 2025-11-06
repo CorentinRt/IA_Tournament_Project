@@ -17,7 +17,18 @@ namespace Echo
     {
         public LookAtTargetType targetType;
         public SharedFloat angleTolerance;
-        
+        private SpaceShipView _ourSpaceShip;
+
+        public override void OnAwake()
+        {
+            base.OnAwake();
+
+            _ourSpaceShip = _echoData.GetOurSpaceship();
+
+            if (_ourSpaceShip == null)
+                Debug.LogError("No our spaceShip found in gameData");
+        }
+
         public override TaskStatus OnUpdate()
         {
             switch (targetType)
@@ -38,8 +49,10 @@ namespace Echo
             // Get both spaceships
             SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
             SpaceShipView enemySpaceship = _echoData.GetEnemySpaceship();
-            
-            return LookAtTargetPosition(ourSpaceship, enemySpaceship.Position);
+
+            Vector2 targetPos = ComputePredictionToSpaceship(enemySpaceship.Position, enemySpaceship.Velocity);
+
+            return LookAtTargetPosition(ourSpaceship, targetPos);
         } 
         
         private TaskStatus LookAtNearestMine()
@@ -68,6 +81,26 @@ namespace Echo
             // Else we set the targetOrientation of our spaceship and return failure
             _echoController.GetInputDataByRef().targetOrientation = targetOrientation;
             return TaskStatus.Failure;
+        }
+
+        public Vector2 ComputePredictionToSpaceship(Vector2 targetPosition, Vector2 targetVelocity)
+        {
+            Vector2 dir = targetVelocity.normalized;
+
+            Vector2 resultPosition = targetPosition;
+
+            for (int i = 0; i < _echoData.MaxPonderationLoopPredition; ++i)
+            {
+                Vector2 tempPosition = targetPosition + dir * i * _echoData.IntervalPrecision;
+
+                if (!AimingHelpers.CanHit(_ourSpaceShip, tempPosition, targetVelocity, _echoData.HitTimeTolerance))
+                    continue;
+
+                resultPosition = tempPosition;
+                break;
+            }
+
+            return resultPosition;
         }
     } 
     
