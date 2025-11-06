@@ -261,6 +261,16 @@ namespace Echo
 
             return nearestBullet;
         }
+
+        public int GetOurSpaceshipScore()
+        {
+            return _gameManager.GetScoreForPlayer(_ourSpaceshipID);
+        }
+
+        public int GetEnemySpaceshipScore()
+        {
+            return _gameManager.GetScoreForPlayer(_enemySpaceshipID);
+        }
     }
 }
 
