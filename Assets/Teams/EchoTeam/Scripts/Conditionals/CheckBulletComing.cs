@@ -34,6 +34,7 @@ namespace Echo
         public override TaskStatus OnUpdate()
         {
             List<BulletView> bullets = _echoData.GetBullets();
+            List<MineView> mines = _echoData.GetMines();
             SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
 
             _echoDebug.UpdateDebugCirclePosition("BulletComingCheckRadius", ourSpaceship.Position);
@@ -45,6 +46,12 @@ namespace Echo
                 float dot = Vector2.Dot(bullet.Velocity, shipToBullet);
                 float distance = Vector2.Distance(ourSpaceship.Position, bullet.Position);
                 if (dot < 0.0f && (distance - ourSpaceship.Radius) <= alertRadius.Value) return TaskStatus.Success;
+            }
+            
+            foreach (MineView mine in mines)
+            {
+                float distance = Vector2.Distance(ourSpaceship.Position, mine.Position);
+                if (distance - ourSpaceship.Radius <= alertRadius.Value) return TaskStatus.Success;
             }
             
             return TaskStatus.Failure;
