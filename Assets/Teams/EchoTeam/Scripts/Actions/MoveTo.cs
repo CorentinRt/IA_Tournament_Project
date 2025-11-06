@@ -221,7 +221,8 @@ namespace Echo
             switch (_target)
             {
                 case MOVETO_TARGET.ENEMY:
-                    return ComputePredictionToSpaceship(_enemySpaceShip.Position, _enemySpaceShip.Velocity);
+                    ComputePredictionToSpaceship(_ourSpaceShip.Position, Bullet.Speed, _enemySpaceShip.Position, _enemySpaceShip.Velocity, out var predictedPos);
+                    return predictedPos;
 
                 case MOVETO_TARGET.NEAREST_WAYPOINT:
                     waypointView = _echoData.GetNearestWayPoint(_ourSpaceShip.Position + _ourSpaceShip.Velocity * _echoData.VelocityModifierFactor);
@@ -256,6 +257,7 @@ namespace Echo
             return Vector2.zero;
         }
 
+        /*
         public Vector2 ComputePredictionToSpaceship(Vector2 targetPosition, Vector2 targetVelocity)
         {
             Vector2 dir = targetVelocity.normalized;
@@ -274,6 +276,39 @@ namespace Echo
             }
 
             return resultPosition;
+        }
+        */
+
+        public bool ComputePredictionToSpaceship(Vector2 shooterPos, float bulletSpeed,
+                                    Vector2 targetPos, Vector2 targetVel,
+                                    out Vector2 interceptPoint)
+        {
+            Vector2 delta = targetPos - shooterPos;
+            float a = Vector2.Dot(targetVel, targetVel) - bulletSpeed * bulletSpeed;
+            float b = 2f * Vector2.Dot(delta, targetVel);
+            float c = Vector2.Dot(delta, delta);
+
+            float discriminant = b * b - 4 * a * c;
+            if (discriminant < 0)
+            {
+                interceptPoint = targetPos;
+                return false;
+            }
+
+            float sqrtD = Mathf.Sqrt(discriminant);
+            float t1 = (-b - sqrtD) / (2 * a);
+            float t2 = (-b + sqrtD) / (2 * a);
+
+            float t = Mathf.Min(t1, t2);
+            if (t < 0) t = Mathf.Max(t1, t2);
+            if (t < 0)
+            {
+                interceptPoint = targetPos;
+                return false;
+            }
+
+            interceptPoint = targetPos + targetVel * t;
+            return true;
         }
     }
 }
