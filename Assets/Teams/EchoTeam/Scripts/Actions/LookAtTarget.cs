@@ -50,10 +50,15 @@ namespace Echo
             SpaceShipView ourSpaceship = _echoData.GetOurSpaceship();
             SpaceShipView enemySpaceship = _echoData.GetEnemySpaceship();
 
-            Vector2 targetPos = ComputePredictionToSpaceship(enemySpaceship.Position, enemySpaceship.Velocity);
+            bool foundPrediction = ComputePredictionToSpaceship(_ourSpaceShip.Position, Bullet.Speed,
+            enemySpaceship.Position, enemySpaceship.Velocity, out var predictedPos);
 
-            return LookAtTargetPosition(ourSpaceship, targetPos);
-        } 
+            //Debug.Log($"Found = {foundPrediction}, Target pos = {enemySpaceship.Position}, predicted pos {predictedPos}");
+
+            Debug.DrawLine(ourSpaceship.Position, predictedPos, Color.yellow);
+
+            return LookAtTargetPosition(ourSpaceship, predictedPos);
+        }
         
         private TaskStatus LookAtNearestMine()
         {
@@ -80,27 +85,39 @@ namespace Echo
             
             // Else we set the targetOrientation of our spaceship and return failure
             _echoController.GetInputDataByRef().targetOrientation = targetOrientation;
-            return TaskStatus.Failure;
+            return TaskStatus.Running;
         }
 
-        public Vector2 ComputePredictionToSpaceship(Vector2 targetPosition, Vector2 targetVelocity)
+        public bool ComputePredictionToSpaceship(Vector2 shooterPos, float bulletSpeed,
+                                    Vector2 targetPos, Vector2 targetVel,
+                                    out Vector2 interceptPoint)
         {
-            Vector2 dir = targetVelocity.normalized;
+            Vector2 delta = targetPos - shooterPos;
+            float a = Vector2.Dot(targetVel, targetVel) - bulletSpeed * bulletSpeed;
+            float b = 2f * Vector2.Dot(delta, targetVel);
+            float c = Vector2.Dot(delta, delta);
 
-            Vector2 resultPosition = targetPosition;
-
-            for (int i = 0; i < _echoData.MaxPonderationLoopPredition; ++i)
+            float discriminant = b * b - 4 * a * c;
+            if (discriminant < 0)
             {
-                Vector2 tempPosition = targetPosition + dir * i * _echoData.IntervalPrecision;
-
-                if (!AimingHelpers.CanHit(_ourSpaceShip, tempPosition, targetVelocity, _echoData.HitTimeTolerance))
-                    continue;
-
-                resultPosition = tempPosition;
-                break;
+                interceptPoint = targetPos;
+                return false;
             }
 
-            return resultPosition;
+            float sqrtD = Mathf.Sqrt(discriminant);
+            float t1 = (-b - sqrtD) / (2 * a);
+            float t2 = (-b + sqrtD) / (2 * a);
+
+            float t = Mathf.Min(t1, t2);
+            if (t < 0) t = Mathf.Max(t1, t2);
+            if (t < 0)
+            {
+                interceptPoint = targetPos;
+                return false;
+            }
+
+            interceptPoint = targetPos + targetVel * t;
+            return true;
         }
     } 
     
