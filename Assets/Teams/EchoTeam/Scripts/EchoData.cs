@@ -224,20 +224,12 @@ namespace Echo
                 if (Vector2.Distance(bullet.Position, ourSpaceship.Position) > radius)
                     continue;
 
-                //Compute intersection between bullet line and ship line, if no intersection we continue to next bullet
-                if (!AimingHelpers.ComputeIntersection(bullet.Position, bullet.Velocity.normalized, ourSpaceship.Position, ourSpaceship.Velocity.normalized, out Vector2 intersection))
-                    continue;
+                float oritentationBullet = EchoMath.OriginToTargetVectorAngle(Vector2.right, bullet.Velocity.normalized);
 
-                //Compute Time to intersection point for ship and bullet
-                float shipDistanceToIntersection = Vector2.Distance(intersection, ourSpaceship.Position);
-                float shipTimeToIntersection = ourSpaceship.Velocity.magnitude / shipDistanceToIntersection;
-
-                float bulletDistanceToIntersection = Vector2.Distance(intersection, bullet.Position);
-                float bulletTimeToIntersection = bullet.Velocity.magnitude / bulletDistanceToIntersection;
-
-                //Check if time for bullet to arrive to point = time for ship to arrive at same point (with tolerance)
-                if (Mathf.Abs(shipTimeToIntersection - bulletTimeToIntersection) <= tolerance)
+                if (EchoMath.CanHit(oritentationBullet, bullet.Position, ourSpaceship.Position, ourSpaceship.Velocity, tolerance))
+                {
                     dangerBullets.Add(bullet);
+                }
             }
 
             if (dangerBullets.Count <= 0)

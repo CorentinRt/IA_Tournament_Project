@@ -54,6 +54,14 @@ namespace Echo
             //Debug.Log($"Abs return need = {Mathf.Abs(timeDiff)} < {hitTimeTolerance}");
             return Mathf.Abs(timeDiff) < hitTimeTolerance;
         }
+
+        public static Vector2 Rotate(Vector2 vector, float degrees)
+        {
+            float rad = degrees * Mathf.Deg2Rad;
+            float cos = Mathf.Cos(rad);
+            float sin = Mathf.Sin(rad);
+            return new Vector2(vector.x * cos - vector.y * sin, vector.x * sin + vector.y * cos);
+        }
     }
 }
 
